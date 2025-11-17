@@ -1,10 +1,16 @@
 import { pool } from '../db';
+import bcrypt from 'bcrypt';
 
 export interface User {
   id: number;
+  nombre: string;
+  apellido: string;
   email: string;
-  role: 'SUPERADMIN' | 'ADMIN' | 'DOCENTE' | 'ALUMNO';
   contrasenia_hash: string;
+  rol: 'SUPERADMIN' | 'ADMIN' | 'DOCENTE' | 'ALUMNO';
+  institucion_id: number | null;
+  activo: boolean;
+  created_at: Date;
 }
 
 export async function findUserByEmailAndPassword(
@@ -13,7 +19,16 @@ export async function findUserByEmailAndPassword(
 ): Promise<User | null> {
 
   const query = `
-    SELECT id, email, rol, contrasenia_hash
+    SELECT 
+      id,
+      nombre,
+      apellido,
+      email,
+      contrasenia_hash,
+      rol,
+      institucion_id,
+      activo,
+      created_at
     FROM usuario
     WHERE email = ?
     LIMIT 1;
@@ -28,7 +43,8 @@ export async function findUserByEmailAndPassword(
 
     const user = rows[0] as User;
 
-    if (password !== user.contrasenia_hash) {
+    const isValidPassword = await bcrypt.compare(password, user.contrasenia_hash);
+    if (!isValidPassword) {
       return null;
     }
 
