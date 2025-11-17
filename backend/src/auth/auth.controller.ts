@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 export async function login(req: Request, res: Response) {
   try {
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
       return res.status(400).json({
         ok: false,
@@ -28,7 +28,7 @@ export async function login(req: Request, res: Response) {
       {
         id: user.id,
         email: user.email,
-        role: user.role
+        rol: user.rol
       },
       process.env.JWT_SECRET || 'dev-secret',
       { expiresIn: '12h' }
@@ -40,7 +40,7 @@ export async function login(req: Request, res: Response) {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role
+        rol: user.rol
       }
     });
 
