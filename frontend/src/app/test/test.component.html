@@ -1,0 +1,274 @@
+<!-- 
+    DASHBOARD SUPERADMIN
+<header class="px-6 py-4 flex items-center justify-between text-slate-200">
+    <div class="flex items-baseline gap-4">
+      <span class="text-3xl font-bold">Instruya</span>
+      <span class="text-xl text-slate-400">Dashboard</span>
+    </div>
+    <span class="text-lg text-slate-300">Superadministrador</span>
+  </header>
+  
+  <main class="px-6 pb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <button type="button"
+        class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-8 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+        <div class="h-14 w-14 rounded-lg bg-blue-600/15 flex items-center justify-center mb-6">
+          <i class="pi pi-plus text-2xl text-blue-500 group-hover:text-blue-400"></i>
+        </div>
+        <div class="text-2xl font-semibold text-slate-200">Nueva institución</div>
+        <p class="mt-2 text-slate-400">Crear una institución</p>
+      </button>
+  
+      <button type="button"
+        class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-8 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+        <div class="h-14 w-14 rounded-lg bg-blue-600/15 flex items-center justify-center mb-6">
+          <i class="pi pi-user-plus text-2xl text-blue-500 group-hover:text-blue-400"></i>
+        </div>
+        <div class="text-2xl font-semibold text-slate-200">Nuevo admin de institución</div>
+        <p class="mt-2 text-slate-400">Dar de alta un administrador</p>
+      </button>
+  
+      <button type="button"
+        class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-8 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+        <div class="h-14 w-14 rounded-lg bg-blue-600/15 flex items-center justify-center mb-6">
+          <i class="pi pi-list text-2xl text-blue-500 group-hover:text-blue-400"></i>
+        </div>
+        <div class="text-2xl font-semibold text-slate-200">Ver listado de instituciones</div>
+        <p class="mt-2 text-slate-400">Gestionar instituciones existentes</p>
+      </button>
+  
+    </div>
+  </main>
+    -->
+
+
+
+<!-- REGISTRAR Instituto
+<header class="px-6 py-4 flex items-center justify-between text-slate-300">
+  <div class="flex items-baseline gap-4">
+    <span class="text-3xl font-bold text-slate-200">Instruya</span>
+    <span class="text-xl text-slate-400">Crear institución</span>
+  </div>
+  <span class="text-lg text-slate-400">Superadministrador</span>
+</header>
+
+<main class="px-6 pb-10">
+  <div class="max-w-3xl">
+    <div class="rounded-2xl border border-slate-700 bg-slate-800 shadow-md p-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="h-12 w-12 rounded-xl bg-blue-600/15 flex items-center justify-center">
+          <i class="pi pi-plus text-xl text-blue-400"></i>
+        </div>
+        <h2 class="text-2xl font-semibold text-slate-100 m-0">Nueva institución</h2>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6">
+        <div>
+          <label for="email" class="block text-slate-300 mb-2">Email de la institución</label>
+          <input id="email" type="text" pInputText [(ngModel)]="email"
+                 class="w-full" placeholder="instituto@ejemplo.com" />
+        </div>
+
+        <div>
+          <label for="nombre" class="block text-slate-300 mb-2">Nombre</label>
+          <input id="nombre" type="text" pInputText [(ngModel)]="nombre"
+                 class="w-full" placeholder="Instituto San Martín" />
+        </div>
+
+        <div>
+          <label for="direccion" class="block text-slate-300 mb-2">Dirección</label>
+          <input id="direccion" type="text" pInputText [(ngModel)]="direccion"
+                 class="w-full" placeholder="Av. Siempre Viva 123, CABA" />
+        </div>
+      </div>
+
+      <div class="mt-8 flex items-center gap-3">
+        <button pButton label="Crear institución" class="px-5"></button>
+        <button pButton label="Cancelar" severity="secondary" class="px-5 p-button-outlined"></button>
+      </div>
+    </div>
+  </div>
+</main> -->
+
+
+<!-- dashboard administrador de instituto
+<header class="px-6 py-4 flex items-center justify-between text-slate-300">
+  <div class="flex items-baseline gap-4">
+    <span class="text-3xl font-bold text-slate-200">Instruya</span>
+    <span class="text-xl text-slate-400">Dashboard</span>
+  </div>
+  <span class="text-lg text-slate-400">Administrador de institución</span>
+</header>
+
+<main class="px-6 pb-10">
+  
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+    
+    <button type="button"
+      class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-6 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+      <div class="h-12 w-12 rounded-lg bg-blue-600/15 flex items-center justify-center mb-4">
+        <i class="pi pi-users text-xl text-blue-500 group-hover:text-blue-400"></i>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xl font-semibold text-slate-200">Alumnos</div>
+          <p class="mt-1 text-slate-400">Gestión y listados</p>
+        </div>
+        <span class="px-2 py-1 rounded-md text-sm bg-blue-600/20 text-blue-300">256</span>
+      </div>
+    </button>
+
+    
+    <button type="button"
+      class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-6 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+      <div class="h-12 w-12 rounded-lg bg-blue-600/15 flex items-center justify-center mb-4">
+        <i class="pi pi-id-card text-xl text-blue-500 group-hover:text-blue-400"></i>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xl font-semibold text-slate-200">Docentes</div>
+          <p class="mt-1 text-slate-400">ABM y asignaciones</p>
+        </div>
+        <span class="px-2 py-1 rounded-md text-sm bg-blue-600/20 text-blue-300">34</span>
+      </div>
+    </button>
+
+    
+    <button type="button"
+      class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-6 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+      <div class="h-12 w-12 rounded-lg bg-blue-600/15 flex items-center justify-center mb-4">
+        <i class="pi pi-sitemap text-xl text-blue-500 group-hover:text-blue-400"></i>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xl font-semibold text-slate-200">Carreras</div>
+          <p class="mt-1 text-slate-400">Plan y estructura</p>
+        </div>
+        <span class="px-2 py-1 rounded-md text-sm bg-blue-600/20 text-blue-300">8</span>
+      </div>
+    </button>
+
+    
+    <button type="button"
+      class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-6 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+      <div class="h-12 w-12 rounded-lg bg-blue-600/15 flex items-center justify-center mb-4">
+        <i class="pi pi-book text-xl text-blue-500 group-hover:text-blue-400"></i>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xl font-semibold text-slate-200">Materias</div>
+          <p class="mt-1 text-slate-400">Programas y cursadas</p>
+        </div>
+        <span class="px-2 py-1 rounded-md text-sm bg-blue-600/20 text-blue-300">64</span>
+      </div>
+    </button>
+
+    
+    <button type="button"
+      class="group w-full h-full rounded-xl border border-slate-700 bg-slate-800 p-6 text-left shadow hover:shadow-lg hover:border-slate-600 transition">
+      <div class="h-12 w-12 rounded-lg bg-blue-600/15 flex items-center justify-center mb-4">
+        <i class="pi pi-list-check text-xl text-blue-500 group-hover:text-blue-400"></i>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xl font-semibold text-slate-200">Inscripciones</div>
+          <p class="mt-1 text-slate-400">Ciclos y turnos</p>
+        </div>
+        <span class="px-2 py-1 rounded-md text-sm bg-blue-600/20 text-blue-300">120</span>
+      </div>
+    </button>
+  </div>
+</main>
+ -->
+
+ <!-- HEADER -->
+<header class="px-6 py-4 flex items-center justify-between text-slate-300">
+  <div class="flex items-baseline gap-4">
+    <span class="text-3xl font-bold text-slate-200">Instruya</span>
+    <span class="text-xl text-slate-400">Dashboard</span>
+  </div>
+  <span class="text-lg text-slate-400">Docente</span>
+</header>
+
+<!-- MAIN -->
+<main class="px-6 pb-10">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- MIS MATERIAS (ocupa 2 columnas en desktop) -->
+    <section class="lg:col-span-2 rounded-2xl border border-slate-700 bg-slate-800 shadow-md">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+            <i class="pi pi-book text-blue-400"></i>
+          </div>
+          <h2 class="text-xl font-semibold text-slate-100 m-0">Mis materias</h2>
+        </div>
+        <button class="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-500">
+          <i class="pi pi-arrow-right"></i>
+          Ir a materias
+        </button>
+      </div>
+
+      <ul class="divide-y divide-slate-700">
+        <li *ngFor="let m of materias" class="px-6 py-4 flex items-center justify-between">
+          <div>
+            <div class="text-slate-100 text-lg font-medium">{{ m.nombre }}</div>
+            <div class="text-slate-400 text-sm">{{ m.carrera }} · {{ m.periodo }}</div>
+          </div>
+          <div class="flex items-center gap-6">
+            <span class="inline-flex items-center gap-2 text-slate-300">
+              <i class="pi pi-users text-blue-400"></i>
+              {{ m.alumnos }} alumnos
+            </span>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-2 rounded-md border border-slate-600 text-slate-200 hover:bg-slate-700">
+                Ver alumnos
+              </button>
+              <button class="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-500">
+                Cargar notas
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- PRÓXIMOS EVENTOS -->
+    <section class="rounded-2xl border border-slate-700 bg-slate-800 shadow-md">
+      <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700">
+        <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+          <i class="pi pi-calendar text-blue-400"></i>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-100 m-0">Próximos eventos</h2>
+      </div>
+      <ul class="px-6 py-4 space-y-3">
+        <li *ngFor="let e of eventos" class="flex items-start gap-3">
+          <span class="px-2 py-1 rounded-md bg-blue-600/20 text-blue-300 text-sm min-w-[56px] text-center">{{ e.fecha }}</span>
+          <div>
+            <div class="text-slate-100 font-medium">{{ e.titulo }}</div>
+            <div class="text-slate-400 text-sm">{{ e.detalle }}</div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- NOTIFICACIONES -->
+    <section class="rounded-2xl border border-slate-700 bg-slate-800 shadow-md">
+      <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700">
+        <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+          <i class="pi pi-bell text-blue-400"></i>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-100 m-0">Notificaciones</h2>
+      </div>
+      <ul class="px-6 py-4 space-y-3">
+        <li *ngFor="let n of notis" class="flex items-start gap-3">
+          <i class="pi pi-info-circle text-blue-400 mt-1"></i>
+          <div>
+            <div class="text-slate-100 font-medium">{{ n.titulo }}</div>
+            <div class="text-slate-400 text-sm">{{ n.detalle }}</div>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </div>
+</main>

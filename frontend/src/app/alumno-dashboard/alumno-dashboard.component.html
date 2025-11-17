@@ -1,0 +1,100 @@
+<!-- HEADER -->
+<header class="px-6 py-4 flex items-center justify-between text-slate-300">
+    <div class="flex items-baseline gap-4">
+      <span class="text-3xl font-bold text-slate-200">Instruya</span>
+      <span class="text-xl text-slate-400">Inicio</span>
+    </div>
+    <span class="text-lg text-slate-400">Alumno</span>
+  </header>
+  
+  <!-- MAIN -->
+  <main class="px-6 pb-10">
+    <!-- Estadísticas -->
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+      <div class="rounded-xl border border-slate-700 bg-slate-800 p-5 shadow">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+            <i class="pi pi-check-circle text-blue-400"></i>
+          </div>
+          <div class="text-slate-100 font-semibold">Aprobadas</div>
+        </div>
+        <div class="text-3xl font-bold text-slate-100">{{ totalAprobadas }}</div>
+      </div>
+  
+      <div class="rounded-xl border border-slate-700 bg-slate-800 p-5 shadow">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+            <i class="pi pi-book text-blue-400"></i>
+          </div>
+          <div class="text-slate-100 font-semibold">En curso</div>
+        </div>
+        <div class="text-3xl font-bold text-slate-100">{{ totalEnCurso }}</div>
+      </div>
+  
+      <div class="rounded-xl border border-slate-700 bg-slate-800 p-5 shadow">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+            <i class="pi pi-chart-line text-blue-400"></i>
+          </div>
+          <div class="text-slate-100 font-semibold">Promedio</div>
+        </div>
+        <div class="text-3xl font-bold text-slate-100">{{ promedio | number:'1.1-1' }}</div>
+      </div>
+    </section>
+  
+    <!-- Grid principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Mis materias (2 columnas) -->
+      <section class="lg:col-span-2 rounded-2xl border border-slate-700 bg-slate-800 shadow">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-700">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+              <i class="pi pi-book text-blue-400"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-slate-100 m-0">Mis materias</h2>
+          </div>
+          <button class="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-500">
+            <i class="pi pi-list"></i> Ver todas
+          </button>
+        </div>
+  
+        <ul class="divide-y divide-slate-700">
+          <li *ngFor="let m of materias" class="px-6 py-4 flex items-center justify-between">
+            <div>
+              <div class="text-slate-100 text-lg font-medium">{{ m.nombre }}</div>
+              <div class="text-slate-400 text-sm">{{ m.carrera }} · {{ m.periodo }}</div>
+            </div>
+            <span
+              class="px-2 py-1 rounded-md text-sm"
+              [class.bg-blue-600]="m.estado==='Aprobada'"
+              [class.text-white]="m.estado==='Aprobada'"
+              [class.bg-slate-700]="m.estado==='En curso'"
+              [class.text-slate-200]="m.estado==='En curso'"
+            >
+              {{ m.estado }}
+            </span>
+          </li>
+        </ul>
+      </section>
+  
+      <!-- Notificaciones -->
+      <section class="rounded-2xl border border-slate-700 bg-slate-800 shadow">
+        <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700">
+          <div class="h-10 w-10 rounded-lg bg-blue-600/20 flex items-center justify-center">
+            <i class="pi pi-bell text-blue-400"></i>
+          </div>
+          <h2 class="text-lg font-semibold text-slate-100 m-0">Notificaciones</h2>
+        </div>
+        <ul class="px-6 py-4 space-y-3">
+          <li *ngFor="let n of notis" class="flex items-start gap-3">
+            <span class="px-2 py-1 rounded-md bg-blue-600/20 text-blue-300 text-sm min-w-[56px] text-center">{{ n.fecha }}</span>
+            <div>
+              <div class="text-slate-100 font-medium">{{ n.titulo }}</div>
+              <div class="text-slate-400 text-sm">{{ n.detalle }}</div>
+            </div>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </main>
+  
