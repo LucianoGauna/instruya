@@ -4,6 +4,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ import { LoginService } from '../services/login.service';
 export class LoginPageComponent {
   private loginService = inject(LoginService);
   private router = inject(Router);
+  private auth = inject(AuthService);
 
   fb = new FormBuilder();
   form: FormGroup = this.fb.group({
@@ -28,12 +30,14 @@ export class LoginPageComponent {
     const { email, password } = this.form.value;
 
     this.loginService.login({ email, password }).subscribe({
-      next: (res) => {
-        console.log('LOGIN OK:', res);
-      },
-      error: (err) => {
-        console.error('LOGIN ERROR:', err);
-      },
-    });
+        next: (res) => {
+          console.log('LOGIN OK:', res);
+          // Guardar sesión
+          this.auth.login(res.token, res.user);
+        },
+        error: (err) => {
+          console.error('LOGIN ERROR:', err);
+        }
+      });
   }
 }
