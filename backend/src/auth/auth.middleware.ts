@@ -1,11 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
-type AuthUser = {
-  id: number;
-  email: string;
-  rol: 'SUPERADMIN' | 'ADMIN' | 'DOCENTE' | 'ALUMNO';
-};
+import type { AuthUser, AuthedRequest, Role } from './auth.types';
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.header('Authorization');
@@ -22,17 +17,27 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
   try {
     const secret = process.env.JWT_SECRET || 'dev-secret';
+    const decoded = jwt.verify(token, secret);
 
-    const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
+    // jwt.verify puede devolver string o un objeto
+    if (typeof decoded === 'string') {
+      return res.status(401).json({ ok: false, message: 'Token inválido' });
+    }
+
+    const payload = decoded as jwt.JwtPayload;
+
+    // Validación mínima para no explotar si el token viene raro
+    if (!payload.id || !payload.email || !payload.rol) {
+      return res.status(401).json({ ok: false, message: 'Token inválido (payload incompleto)' });
+    }
 
     const user: AuthUser = {
-      id: decoded.id as number,
-      email: decoded.email as string,
-      rol: decoded.rol as AuthUser['rol'],
+      id: Number(payload.id),
+      email: String(payload.email),
+      rol: payload.rol as Role,
     };
 
-    // Guardo el user en el request
-    (req as Request & { user: AuthUser }).user = user;
+    (req as AuthedRequest).user = user;
 
     return next();
   } catch {
