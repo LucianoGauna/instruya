@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanMatchFn, Router, Route, UrlSegment } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 function homeRouteForRole(rol: string): string {
@@ -17,9 +17,8 @@ function homeRouteForRole(rol: string): string {
   }
 }
 
-export function roleGuard(allowedRoles: string[]): CanMatchFn {
-  return (route: Route, segments: UrlSegment[]) => {
-
+export function roleGuard(allowedRoles: string[]): CanActivateFn {
+  return () => {
     const auth = inject(AuthService);
     const router = inject(Router);
 
