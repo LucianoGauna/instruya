@@ -1,17 +1,12 @@
 import { Router } from 'express';
 import { pool } from '../db';
 import { authMiddleware } from '../auth/auth.middleware';
-
-type AuthUser = {
-  id: number;
-  email: string;
-  rol: 'SUPERADMIN' | 'ADMIN' | 'DOCENTE' | 'ALUMNO';
-};
+import type { AuthedRequest } from '../auth/auth.types';
 
 const router = Router();
 
 router.get('/mis-materias', authMiddleware, async (req, res) => {
-  const user = (req as unknown as { user: AuthUser }).user;
+  const user = (req as AuthedRequest).user;
 
   if (user.rol !== 'ALUMNO') {
     return res.status(403).json({ ok: false, message: 'No autorizado' });
