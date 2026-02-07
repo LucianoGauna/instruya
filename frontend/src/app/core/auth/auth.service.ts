@@ -1,9 +1,10 @@
 import { Injectable, signal } from '@angular/core';
+import { UserRole } from '../../shared/types/user.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   token = signal<string | null>(null);
-  user = signal<{ id: number; email: string; rol: string } | null>(null);
+  user = signal<{ id: number; email: string; rol: UserRole } | null>(null);
 
   constructor() {
     // cuando arranca la app, intento restaurar sesión
@@ -14,7 +15,7 @@ export class AuthService {
     if (storedUser) this.user.set(JSON.parse(storedUser));
   }
 
-  login(token: string, user: any) {
+  login(token: string, user: { id: number; email: string; rol: UserRole }) {
     this.token.set(token);
     this.user.set(user);
 
