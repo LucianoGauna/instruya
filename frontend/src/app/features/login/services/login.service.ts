@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UserRole } from '../../../shared/types/user.types';
 
 interface LoginRequest {
   email: string;
@@ -13,7 +14,7 @@ interface LoginResponse {
   user: {
     id: number;
     email: string;
-    rol?: string;
+    rol: UserRole;
   };
 }
 
