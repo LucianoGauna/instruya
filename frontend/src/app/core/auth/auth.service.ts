@@ -1,7 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { UserRole } from '../../shared/types/user.types';
-
-type AuthUser = { id: number; email: string; rol: UserRole };
+import { AuthUser } from './auth.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
