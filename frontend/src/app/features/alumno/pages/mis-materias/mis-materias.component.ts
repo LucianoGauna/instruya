@@ -1,0 +1,46 @@
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AlumnoService } from '../../services/alumno.service';
+import { MiMateria } from '../../types/alumno.types';
+
+@Component({
+  selector: 'app-alumno-mis-materias',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './mis-materias.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AlumnoMisMateriasComponent {
+  private alumnoService = inject(AlumnoService);
+  private destroyRef = inject(DestroyRef);
+
+  loading = signal(true);
+  error = signal<string | null>(null);
+  materias = signal<MiMateria[]>([]);
+
+  ngOnInit() {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.alumnoService
+      .getMisMaterias()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.materias.set(res.materias);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.error.set('No se pudieron cargar tus materias');
+          this.loading.set(false);
+        },
+      });
+  }
+}
