@@ -4,8 +4,16 @@
   Bienvenido. Desde acá podés acceder a tus materias.
 </p>
 
-<p-button
-  label="Ver mis materias"
-  icon="pi pi-book"
-  (onClick)="goToMisMaterias()"
-/>
+<div class="flex flex-col gap-3">
+  <p-button
+    label="Ver mis materias"
+    icon="pi pi-book"
+    (onClick)="goToMisMaterias()"
+  ></p-button>
+
+  <p-button
+    label="Ver mis calificaciones"
+    icon="pi pi-star"
+    (onClick)="goToMisCalificaciones()"
+  ></p-button>
+</div>

@@ -15,4 +15,8 @@ export class AlumnoInicioComponent {
   goToMisMaterias() {
     this.router.navigate(['/alumno/mis-materias']);
   }
+
+  goToMisCalificaciones() {
+    this.router.navigate(['/alumno/mis-calificaciones']);
+  }
 }
