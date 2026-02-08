@@ -1,0 +1,32 @@
+<p-button
+  label="Volver"
+  icon="pi pi-arrow-left"
+  class="mb-4"
+  (onClick)="goBack()"
+></p-button>
+
+<h1 class="text-2xl font-semibold mb-4">Carreras</h1>
+
+@if (loading()) {
+  <p>Cargando...</p>
+} @else if (error()) {
+  <p class="text-red-600">{{ error() }}</p>
+} @else {
+  @if (carreras().length === 0) {
+    <p>No hay carreras cargadas.</p>
+  } @else {
+    <div class="space-y-3">
+      @for (c of carreras(); track c.id) {
+        <div class="rounded-lg border p-4 flex items-center justify-between">
+          <div>
+            <div class="font-medium">{{ c.nombre }}</div>
+            <div class="text-sm text-gray-600">
+              Estado:
+              <span>{{ isActiva(c) ? 'Activa' : 'Inactiva' }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}
