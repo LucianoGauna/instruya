@@ -3,6 +3,7 @@ import cors from 'cors';
 import { pool } from './db';
 import authRoutes from './auth/auth.routes';
 import alumnoRoutes from './alumno/alumno.routes';
+import docenteRoutes from './docente/docente.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use('/alumno', alumnoRoutes);
+app.use('/docente', docenteRoutes);
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
