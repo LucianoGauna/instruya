@@ -1,0 +1,39 @@
+<p-button
+  label="Volver"
+  icon="pi pi-arrow-left"
+  class="mb-4"
+  (onClick)="goBack()"
+></p-button>
+
+<h1 class="text-2xl font-semibold mb-4">Mis calificaciones</h1>
+
+@if (loading()) {
+  <p>Cargando...</p>
+} @else if (error()) {
+  <p class="text-red-600">{{ error() }}</p>
+} @else {
+  @if (calificaciones().length === 0) {
+    <p>No tenés calificaciones cargadas.</p>
+  } @else {
+    <div class="space-y-3">
+      @for (c of calificaciones(); track c.calificacion_id) {
+        <div class="rounded-lg border p-4">
+          <div class="font-medium">{{ c.materia_nombre }}</div>
+
+          <div class="text-sm text-gray-600">
+            {{ c.tipo }} · Nota: {{ c.nota }}
+          </div>
+
+          <div class="text-sm text-gray-600">
+            Docente: {{ c.docente_nombre }} {{ c.docente_apellido }}
+            ({{ c.docente_email }})
+          </div>
+
+          <div class="mt-2 text-sm text-gray-500">
+            Fecha: {{ c.fecha }}
+          </div>
+        </div>
+      }
+    </div>
+  }
+}
