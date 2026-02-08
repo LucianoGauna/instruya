@@ -47,6 +47,6 @@ export class DocenteMateriasComponent {
   }
 
   goBack() {
-    this.router.navigate(['/']);
-  }
+    this.router.navigate(['/docente/inicio']);
+  }  
 }
