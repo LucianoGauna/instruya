@@ -13,7 +13,7 @@ export class AlumnoService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/alumno/mis-materias';
 
-  getMisMaterias(): Observable<MisMateriasResponse> {
+  getMaterias(): Observable<MisMateriasResponse> {
     return this.http.get<MisMateriasResponse>(this.apiUrl);
   }
 }

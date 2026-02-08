@@ -33,7 +33,7 @@ export class AlumnoMisMateriasComponent {
     this.error.set(null);
 
     this.alumnoService
-      .getMisMaterias()
+      .getMaterias()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
