@@ -1,9 +1,18 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
-    standalone: true,
-    selector: 'app-alumno-inicio',
-    template: `<h1>Inicio Alumno</h1>`
-  })
-  export class AlumnoInicioComponent {}
-  
+  selector: 'app-alumno-inicio',
+  standalone: true,
+  imports: [ButtonModule],
+  templateUrl: './alumno-inicio.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AlumnoInicioComponent {
+  private router = inject(Router);
+
+  goToMisMaterias() {
+    this.router.navigate(['/alumno/mis-materias']);
+  }
+}
