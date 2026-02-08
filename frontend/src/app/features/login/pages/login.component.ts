@@ -47,7 +47,7 @@ export class LoginPageComponent {
             this.router.navigate(['/admin/dashboard']);
             break;
           case UserRole.DOCENTE:
-            this.router.navigate(['/docente/mis-materias']);
+            this.router.navigate(['/docente/inicio']);
             break;
           case UserRole.ALUMNO:
             this.router.navigate(['/alumno/inicio']);
