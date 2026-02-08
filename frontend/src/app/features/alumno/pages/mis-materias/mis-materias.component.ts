@@ -9,17 +9,20 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlumnoService } from '../../services/alumno.service';
 import { MiMateria } from '../../types/alumno.types';
+import { Router } from '@angular/router';
+import { Button } from "primeng/button";
 
 @Component({
   selector: 'app-alumno-mis-materias',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Button],
   templateUrl: './mis-materias.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlumnoMisMateriasComponent {
   private alumnoService = inject(AlumnoService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -42,5 +45,9 @@ export class AlumnoMisMateriasComponent {
           this.loading.set(false);
         },
       });
+  }
+
+  goBack() {
+    this.router.navigate(['/alumno/inicio']);
   }
 }
