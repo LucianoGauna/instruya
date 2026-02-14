@@ -10,12 +10,19 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 
-import { AdminCarrerasService, Carrera } from '../../services/admin-carreras.service';
+import {
+  AdminCarrerasService,
+  Carrera,
+} from '../../services/admin-carreras.service';
+import { FormsModule } from '@angular/forms';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-admin-carreras',
   standalone: true,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, FormsModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './admin-carreras.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -23,12 +30,93 @@ export class AdminCarrerasComponent {
   private service = inject(AdminCarrerasService);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
+  private messageService = inject(MessageService);
 
   loading = signal(true);
   error = signal<string | null>(null);
   carreras = signal<Carrera[]>([]);
 
+  nuevoNombre = signal('');
+  creating = signal(false);
+
   ngOnInit() {
+    this.loadCarreras();
+  }
+
+  goBack() {
+    this.router.navigate(['/admin/dashboard']);
+  }
+
+  isActiva(c: Carrera): boolean {
+    return c.activa === 1;
+  }
+
+  create() {
+    const nombre = this.nuevoNombre().trim();
+
+    if (!nombre) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Falta nombre',
+        detail: 'Escribí un nombre de carrera',
+        life: 3000,
+      });
+      return;
+    }
+
+    this.creating.set(true);
+
+    this.service
+      .createCarrera(nombre)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.nuevoNombre.set('');
+          this.creating.set(false);
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Carrera creada',
+            detail: 'Se creó correctamente',
+            life: 3000,
+          });
+
+          this.loadCarreras();
+        },
+        error: (err) => {
+          this.creating.set(false);
+
+          if (err?.status === 409) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Duplicado',
+              detail: 'Ya existe una carrera con ese nombre',
+              life: 3500,
+            });
+            return;
+          }
+
+          if (err?.status === 400) {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Datos inválidos',
+              detail: 'El nombre es requerido',
+              life: 3500,
+            });
+            return;
+          }
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo crear la carrera',
+            life: 3500,
+          });
+        },
+      });
+  }
+
+  private loadCarreras() {
     this.loading.set(true);
     this.error.set(null);
 
@@ -45,13 +133,5 @@ export class AdminCarrerasComponent {
           this.loading.set(false);
         },
       });
-  }
-
-  goBack() {
-    this.router.navigate(['/admin/dashboard']);
-  }
-
-  isActiva(c: Carrera): boolean {
-    return c.activa === 1;
   }
 }

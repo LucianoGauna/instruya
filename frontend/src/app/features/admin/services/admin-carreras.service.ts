@@ -14,6 +14,11 @@ interface CarrerasResponse {
   carreras: Carrera[];
 }
 
+interface CreateCarreraResponse {
+  ok: boolean;
+  carrera: { id: number; nombre: string; institucion_id: number };
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminCarrerasService {
   private http = inject(HttpClient);
@@ -21,5 +26,9 @@ export class AdminCarrerasService {
 
   getCarreras(): Observable<CarrerasResponse> {
     return this.http.get<CarrerasResponse>(this.apiUrl);
+  }
+
+  createCarrera(nombre: string): Observable<CreateCarreraResponse> {
+    return this.http.post<CreateCarreraResponse>(this.apiUrl, { nombre });
   }
 }

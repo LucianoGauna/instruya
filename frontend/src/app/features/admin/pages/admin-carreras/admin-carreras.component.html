@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <p-button
   label="Volver"
   icon="pi pi-arrow-left"
@@ -6,6 +7,26 @@
 ></p-button>
 
 <h1 class="text-2xl font-semibold mb-4">Carreras</h1>
+
+<div class="rounded-lg border p-4 mb-4">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <input
+      pInputText
+      type="text"
+      placeholder="Nombre de la nueva carrera"
+      class="w-full"
+      [ngModel]="nuevoNombre()"
+      (ngModelChange)="nuevoNombre.set($event)"
+    />
+
+    <p-button
+      label="Crear"
+      icon="pi pi-plus"
+      [disabled]="creating()"
+      (onClick)="create()"
+    ></p-button>
+  </div>
+</div>
 
 @if (loading()) {
   <p>Cargando...</p>
