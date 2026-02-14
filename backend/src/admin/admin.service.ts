@@ -1,4 +1,5 @@
 import { pool } from '../db';
+import { CreateMateriaResult } from './admin.types';
 
 export async function findCarrerasByAdminUserId(adminUserId: number) {
   const query = `
@@ -164,4 +165,61 @@ export async function findMateriasByCarreraForAdmin(
   );
 
   return rows;
+}
+
+export async function createMateriaForAdminInCarrera(
+  adminUserId: number,
+  carreraId: number,
+  nombre: string,
+  docenteId: number
+): Promise<CreateMateriaResult> {
+  // Validar que la carrera pertenece a la institución del admin
+  const [carreraRows]: any[] = await pool.query(
+    `
+    SELECT c.id
+    FROM carrera c
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    WHERE admin.id = ? AND c.id = ?
+    LIMIT 1;
+    `,
+    [adminUserId, carreraId]
+  );
+
+  if (!carreraRows || carreraRows.length === 0) {
+    return 'CARRERA_NOT_FOUND';
+  }
+
+  // Validar que el docente pertenece a la institución del admin y es DOCENTE activo
+  const [docenteRows]: any[] = await pool.query(
+    `
+    SELECT u.id
+    FROM usuario u
+    INNER JOIN usuario admin ON admin.institucion_id = u.institucion_id
+    WHERE admin.id = ?
+      AND u.id = ?
+      AND u.rol = 'DOCENTE'
+      AND u.activo = 1
+    LIMIT 1;
+    `,
+    [adminUserId, docenteId]
+  );
+
+  if (!docenteRows || docenteRows.length === 0) {
+    return 'DOCENTE_NOT_FOUND';
+  }
+
+  const [result]: any[] = await pool.query(
+    `
+    INSERT INTO materia (carrera_id, nombre, docente_id)
+    VALUES (?, ?, ?);
+    `,
+    [carreraId, nombre, docenteId]
+  );
+
+  return {
+    id: result.insertId,
+    nombre,
+    carrera_id: carreraId,
+    docente_id: docenteId,
+  };
 }

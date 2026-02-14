@@ -3,6 +3,7 @@ import { authMiddleware } from '../auth/auth.middleware';
 import {
   activarCarrera,
   createCarrera,
+  createMateriaEnCarrera,
   desactivarCarrera,
   getCarreras,
   getDocentes,
@@ -61,6 +62,13 @@ router.get(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   getMateriasDeCarrera
+);
+
+router.post(
+  '/carreras/:id/materias',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  createMateriaEnCarrera
 );
 
 export default router;

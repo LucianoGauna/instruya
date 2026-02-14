@@ -7,6 +7,7 @@ import {
   updateCarreraNombreForAdmin,
   findDocentesByAdminUserId,
   findMateriasByCarreraForAdmin,
+  createMateriaForAdminInCarrera,
 } from './admin.service';
 
 export async function getCarreras(req: Request, res: Response) {
@@ -191,6 +192,68 @@ export async function getMateriasDeCarrera(req: Request, res: Response) {
     return res.json({ ok: true, materias });
   } catch (error) {
     console.error('Error en getMateriasDeCarrera:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function createMateriaEnCarrera(req: Request, res: Response) {
+  const carreraId = Number(req.params.id);
+  if (!Number.isFinite(carreraId)) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'ID de carrera inválido' });
+  }
+
+  const { nombre, docente_id } = req.body;
+
+  if (typeof nombre !== 'string' || nombre.trim().length === 0) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'El nombre es requerido' });
+  }
+
+  const docenteId = Number(docente_id);
+  if (!Number.isFinite(docenteId)) {
+    return res.status(400).json({ ok: false, message: 'docente_id inválido' });
+  }
+
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+
+    const result = await createMateriaForAdminInCarrera(
+      adminUserId,
+      carreraId,
+      nombre.trim(),
+      docenteId
+    );
+
+    if (result === 'CARRERA_NOT_FOUND') {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Carrera no encontrada' });
+    }
+
+    if (result === 'DOCENTE_NOT_FOUND') {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Docente no encontrado' });
+    }
+
+    return res.status(201).json({
+      ok: true,
+      materia: result,
+    });
+  } catch (error: any) {
+    if (error?.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({
+        ok: false,
+        message: 'Ya existe una materia con ese nombre en la carrera',
+      });
+    }
+
+    console.error('Error en createMateriaEnCarrera:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });
