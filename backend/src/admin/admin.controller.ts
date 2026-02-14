@@ -5,6 +5,7 @@ import {
   createCarreraForAdmin,
   setCarreraActivaForAdmin,
   updateCarreraNombreForAdmin,
+  findDocentesByAdminUserId,
 } from './admin.service';
 
 export async function getCarreras(req: Request, res: Response) {
@@ -144,6 +145,21 @@ export async function updateCarrera(req: Request, res: Response) {
     }
 
     console.error('Error en updateCarrera:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function getDocentes(req: Request, res: Response) {
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+
+    const docentes = await findDocentesByAdminUserId(adminUserId);
+
+    return res.json({ ok: true, docentes });
+  } catch (error) {
+    console.error('Error en getDocentes:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

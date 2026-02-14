@@ -105,3 +105,22 @@ export async function updateCarreraNombreForAdmin(
 
   return { id: carreraId, nombre };
 }
+
+export async function findDocentesByAdminUserId(adminUserId: number) {
+  const query = `
+    SELECT
+      u.id,
+      u.nombre,
+      u.apellido,
+      u.email
+    FROM usuario u
+    INNER JOIN usuario admin ON admin.institucion_id = u.institucion_id
+    WHERE admin.id = ?
+      AND u.rol = 'DOCENTE'
+      AND u.activo = 1
+    ORDER BY u.apellido, u.nombre;
+  `;
+
+  const [rows] = await pool.query(query, [adminUserId]);
+  return rows;
+}
