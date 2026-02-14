@@ -9,7 +9,6 @@ import {
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
-
 import {
   AdminCarrerasService,
   Carrera,
@@ -17,11 +16,12 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-admin-carreras',
   standalone: true,
-  imports: [CommonModule, ButtonModule, FormsModule, ToastModule],
+  imports: [CommonModule, ButtonModule, FormsModule, InputTextModule, ToastModule],
   providers: [MessageService],
   templateUrl: './admin-carreras.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

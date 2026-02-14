@@ -8,46 +8,42 @@
 
 <h1 class="text-2xl font-semibold mb-4">Carreras</h1>
 
-<div class="rounded-lg border p-4 mb-4">
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-    <input
-      pInputText
-      type="text"
-      placeholder="Nombre de la nueva carrera"
-      class="w-full"
-      [ngModel]="nuevoNombre()"
-      (ngModelChange)="nuevoNombre.set($event)"
-    />
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+  <input
+    pInputText
+    type="text"
+    placeholder="Nombre de la nueva carrera"
+    class="w-full"
+    [ngModel]="nuevoNombre()"
+    (ngModelChange)="nuevoNombre.set($event)"
+  />
 
-    <p-button
-      label="Crear"
-      icon="pi pi-plus"
-      [disabled]="creating()"
-      (onClick)="create()"
-    ></p-button>
-  </div>
+  <p-button
+    label="Crear"
+    icon="pi pi-plus"
+    [disabled]="creating()"
+    (onClick)="create()"
+  ></p-button>
 </div>
 
 @if (loading()) {
-  <p>Cargando...</p>
+<p>Cargando...</p>
 } @else if (error()) {
-  <p class="text-red-600">{{ error() }}</p>
+<p class="text-red-600">{{ error() }}</p>
+} @else { @if (carreras().length === 0) {
+<p>No hay carreras cargadas.</p>
 } @else {
-  @if (carreras().length === 0) {
-    <p>No hay carreras cargadas.</p>
-  } @else {
-    <div class="space-y-3">
-      @for (c of carreras(); track c.id) {
-        <div class="rounded-lg border p-4 flex items-center justify-between">
-          <div>
-            <div class="font-medium">{{ c.nombre }}</div>
-            <div class="text-sm text-gray-600">
-              Estado:
-              <span>{{ isActiva(c) ? 'Activa' : 'Inactiva' }}</span>
-            </div>
-          </div>
-        </div>
-      }
+<div class="space-y-3">
+  @for (c of carreras(); track c.id) {
+  <div class="rounded-lg border p-4 flex items-center justify-between">
+    <div>
+      <div class="font-medium">{{ c.nombre }}</div>
+      <div class="text-sm text-gray-600">
+        Estado:
+        <span>{{ isActiva(c) ? "Activa" : "Inactiva" }}</span>
+      </div>
     </div>
+  </div>
   }
-}
+</div>
+} }
