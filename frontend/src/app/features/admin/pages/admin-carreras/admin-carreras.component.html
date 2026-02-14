@@ -3,6 +3,7 @@
   label="Volver"
   icon="pi pi-arrow-left"
   class="mb-4"
+  severity="info"
   (onClick)="goBack()"
 ></p-button>
 
@@ -42,6 +43,25 @@
         Estado:
         <span>{{ isActiva(c) ? "Activa" : "Inactiva" }}</span>
       </div>
+    </div>
+    <div class="flex items-center gap-2">
+      @if (isActiva(c)) {
+      <p-button
+        label="Desactivar"
+        icon="pi pi-times"
+        severity="warn"
+        [disabled]="updatingId() === c.id"
+        (onClick)="desactivar(c)"
+      ></p-button>
+      } @else {
+      <p-button
+        label="Activar"
+        icon="pi pi-check"
+        severity="success"
+        [disabled]="updatingId() === c.id"
+        (onClick)="activar(c)"
+      ></p-button>
+      }
     </div>
   </div>
   }

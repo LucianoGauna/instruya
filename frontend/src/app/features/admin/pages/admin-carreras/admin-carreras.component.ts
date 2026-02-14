@@ -39,6 +39,8 @@ export class AdminCarrerasComponent {
   nuevoNombre = signal('');
   creating = signal(false);
 
+  updatingId = signal<number | null>(null);
+
   ngOnInit() {
     this.loadCarreras();
   }
@@ -115,6 +117,65 @@ export class AdminCarrerasComponent {
         },
       });
   }
+
+  desactivar(c: Carrera) {
+    this.updatingId.set(c.id);
+  
+    this.service
+      .desactivarCarrera(c.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Carrera desactivada',
+            detail: `"${c.nombre}" quedó inactiva`,
+            life: 3000,
+          });
+          this.loadCarreras();
+          this.updatingId.set(null);
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo desactivar la carrera',
+            life: 3500,
+          });
+          this.updatingId.set(null);
+        },
+      });
+  }
+  
+  activar(c: Carrera) {
+    this.updatingId.set(c.id);
+  
+    this.service
+      .activarCarrera(c.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Carrera activada',
+            detail: `"${c.nombre}" volvió a estar activa`,
+            life: 3000,
+          });
+          this.loadCarreras();
+          this.updatingId.set(null);
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo activar la carrera',
+            life: 3500,
+          });
+          this.updatingId.set(null);
+        },
+      });
+  }
+  
 
   private loadCarreras() {
     this.loading.set(true);

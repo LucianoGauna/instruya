@@ -31,4 +31,12 @@ export class AdminCarrerasService {
   createCarrera(nombre: string): Observable<CreateCarreraResponse> {
     return this.http.post<CreateCarreraResponse>(this.apiUrl, { nombre });
   }
+
+  activarCarrera(id: number) {
+    return this.http.patch<{ ok: boolean }>(`${this.apiUrl}/${id}/activar`, {});
+  }
+  
+  desactivarCarrera(id: number) {
+    return this.http.patch<{ ok: boolean }>(`${this.apiUrl}/${id}/desactivar`, {});
+  }
 }
