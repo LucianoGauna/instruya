@@ -17,7 +17,10 @@ export async function findCarrerasByAdminUserId(adminUserId: number) {
   return rows;
 }
 
-export async function createCarreraForAdmin(adminUserId: number, nombre: string) {
+export async function createCarreraForAdmin(
+  adminUserId: number,
+  nombre: string
+) {
   // Buscar institucion_id del admin
   const [users]: any[] = await pool.query(
     `SELECT institucion_id FROM usuario WHERE id = ? LIMIT 1;`,
@@ -44,4 +47,37 @@ export async function createCarreraForAdmin(adminUserId: number, nombre: string)
     nombre,
     institucion_id: institucionId,
   };
+}
+
+async function findInstitucionIdByUserId(
+  userId: number
+): Promise<number | null> {
+  const [rows]: any[] = await pool.query(
+    `SELECT institucion_id FROM usuario WHERE id = ? LIMIT 1;`,
+    [userId]
+  );
+
+  if (!rows || rows.length === 0) return null;
+  return rows[0].institucion_id ?? null;
+}
+
+export async function setCarreraActivaForAdmin(
+  adminUserId: number,
+  carreraId: number,
+  activa: 0 | 1
+): Promise<boolean> {
+  const institucionId = await findInstitucionIdByUserId(adminUserId);
+
+  if (!institucionId) {
+    return false;
+  }
+
+  const [result]: any[] = await pool.query(
+    `UPDATE carrera
+     SET activa = ?
+     WHERE id = ? AND institucion_id = ?;`,
+    [activa, carreraId, institucionId]
+  );
+
+  return result.affectedRows > 0;
 }
