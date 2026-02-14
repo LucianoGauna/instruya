@@ -124,3 +124,44 @@ export async function findDocentesByAdminUserId(adminUserId: number) {
   const [rows] = await pool.query(query, [adminUserId]);
   return rows;
 }
+
+export async function findMateriasByCarreraForAdmin(
+  adminUserId: number,
+  carreraId: number
+) {
+  // Validar que la carrera pertenezca a la institución del admin
+  const [carreraRows]: any[] = await pool.query(
+    `
+    SELECT c.id
+    FROM carrera c
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    WHERE admin.id = ? AND c.id = ?
+    LIMIT 1;
+    `,
+    [adminUserId, carreraId]
+  );
+
+  if (!carreraRows || carreraRows.length === 0) {
+    return null;
+  }
+
+  // Traer materias de esa carrera (con info del docente)
+  const [rows] = await pool.query(
+    `
+    SELECT
+      m.id AS materia_id,
+      m.nombre AS materia_nombre,
+      m.docente_id,
+      d.nombre AS docente_nombre,
+      d.apellido AS docente_apellido,
+      d.email AS docente_email
+    FROM materia m
+    INNER JOIN usuario d ON d.id = m.docente_id
+    WHERE m.carrera_id = ?
+    ORDER BY m.nombre;
+    `,
+    [carreraId]
+  );
+
+  return rows;
+}

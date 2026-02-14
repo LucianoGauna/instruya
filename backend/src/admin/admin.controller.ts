@@ -6,6 +6,7 @@ import {
   setCarreraActivaForAdmin,
   updateCarreraNombreForAdmin,
   findDocentesByAdminUserId,
+  findMateriasByCarreraForAdmin,
 } from './admin.service';
 
 export async function getCarreras(req: Request, res: Response) {
@@ -160,6 +161,36 @@ export async function getDocentes(req: Request, res: Response) {
     return res.json({ ok: true, docentes });
   } catch (error) {
     console.error('Error en getDocentes:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function getMateriasDeCarrera(req: Request, res: Response) {
+  const carreraId = Number(req.params.id);
+
+  if (!Number.isFinite(carreraId)) {
+    return res.status(400).json({ ok: false, message: 'ID inválido' });
+  }
+
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+
+    const materias = await findMateriasByCarreraForAdmin(
+      adminUserId,
+      carreraId
+    );
+
+    if (materias === null) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Carrera no encontrada' });
+    }
+
+    return res.json({ ok: true, materias });
+  } catch (error) {
+    console.error('Error en getMateriasDeCarrera:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

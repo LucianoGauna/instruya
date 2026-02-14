@@ -6,6 +6,7 @@ import {
   desactivarCarrera,
   getCarreras,
   getDocentes,
+  getMateriasDeCarrera,
   updateCarrera,
 } from './admin.controller';
 import { requireRole } from '../auth/require-role.middleware';
@@ -19,18 +20,21 @@ router.get(
   requireRole([Roles.ADMIN]),
   getCarreras
 );
+
 router.post(
   '/carreras',
   authMiddleware,
   requireRole([Roles.ADMIN]),
   createCarrera
 );
+
 router.patch(
   '/carreras/:id/desactivar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
   desactivarCarrera
 );
+
 router.patch(
   '/carreras/:id/activar',
   authMiddleware,
@@ -50,6 +54,13 @@ router.get(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   getDocentes
+);
+
+router.get(
+  '/carreras/:id/materias',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  getMateriasDeCarrera
 );
 
 export default router;
