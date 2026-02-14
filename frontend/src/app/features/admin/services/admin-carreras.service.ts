@@ -39,4 +39,11 @@ export class AdminCarrerasService {
   desactivarCarrera(id: number) {
     return this.http.patch<{ ok: boolean }>(`${this.apiUrl}/${id}/desactivar`, {});
   }
+
+  updateCarrera(id: number, nombre: string) {
+    return this.http.patch<{ ok: boolean; carrera: { id: number; nombre: string } }>(
+      `${this.apiUrl}/${id}`,
+      { nombre }
+    );
+  }  
 }
