@@ -12,6 +12,7 @@
 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
   <input
     pInputText
+    size="small"
     type="text"
     placeholder="Nombre de la nueva carrera"
     class="w-full"
@@ -49,7 +50,8 @@
         />
         <div class="flex gap-2">
           <p-button
-            label="Guardar"
+            rounded
+            size="small"
             icon="pi pi-check"
             severity="success"
             [disabled]="updatingId() === c.id"
@@ -57,9 +59,10 @@
           ></p-button>
 
           <p-button
-            label="Cancelar"
+            rounded
+            size="small"
             icon="pi pi-times"
-            severity="secondary"
+            severity="danger"
             [disabled]="updatingId() === c.id"
             (onClick)="cancelEdit()"
           ></p-button>
@@ -77,15 +80,17 @@
     <div class="flex items-center gap-2">
       @if (editingId() !== c.id) {
       <p-button
-        label="Editar"
+        rounded
+        size="small"
         icon="pi pi-pencil"
-        severity="info"
+        severity="secondary"
         [disabled]="updatingId() === c.id"
         (onClick)="startEdit(c)"
       ></p-button>
       } @if (isActiva(c)) {
       <p-button
         label="Desactivar"
+        size="small"
         icon="pi pi-times"
         severity="warn"
         [disabled]="updatingId() === c.id"
@@ -94,6 +99,7 @@
       } @else {
       <p-button
         label="Activar"
+        size="small"
         icon="pi pi-check"
         severity="success"
         [disabled]="updatingId() === c.id"
