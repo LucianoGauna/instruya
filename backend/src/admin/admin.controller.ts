@@ -4,6 +4,7 @@ import {
   findCarrerasByAdminUserId,
   createCarreraForAdmin,
   setCarreraActivaForAdmin,
+  updateCarreraNombreForAdmin,
 } from './admin.service';
 
 export async function getCarreras(req: Request, res: Response) {
@@ -98,6 +99,51 @@ export async function activarCarrera(req: Request, res: Response) {
     return res.json({ ok: true });
   } catch (error) {
     console.error('Error en activarCarrera:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function updateCarrera(req: Request, res: Response) {
+  const carreraId = Number(req.params.id);
+  if (!Number.isFinite(carreraId)) {
+    return res.status(400).json({ ok: false, message: 'ID inválido' });
+  }
+
+  const { nombre } = req.body;
+  if (typeof nombre !== 'string' || nombre.trim().length === 0) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'El nombre es requerido' });
+  }
+
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+    const nombreLimpio = nombre.trim();
+
+    const carrera = await updateCarreraNombreForAdmin(
+      adminUserId,
+      carreraId,
+      nombreLimpio
+    );
+
+    if (!carrera) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Carrera no encontrada' });
+    }
+
+    return res.json({ ok: true, carrera });
+  } catch (error: any) {
+    if (error?.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({
+        ok: false,
+        message: 'Ya existe una carrera con ese nombre en la institución',
+      });
+    }
+
+    console.error('Error en updateCarrera:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

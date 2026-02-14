@@ -5,6 +5,7 @@ import {
   createCarrera,
   desactivarCarrera,
   getCarreras,
+  updateCarrera,
 } from './admin.controller';
 import { requireRole } from '../auth/require-role.middleware';
 import { Roles } from '../auth/auth.types';
@@ -34,6 +35,13 @@ router.patch(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   activarCarrera
+);
+
+router.patch(
+  '/carreras/:id',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  updateCarrera
 );
 
 export default router;

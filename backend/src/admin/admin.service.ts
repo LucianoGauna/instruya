@@ -81,3 +81,27 @@ export async function setCarreraActivaForAdmin(
 
   return result.affectedRows > 0;
 }
+
+export async function updateCarreraNombreForAdmin(
+  adminUserId: number,
+  carreraId: number,
+  nombre: string
+): Promise<{ id: number; nombre: string } | null> {
+  const institucionId = await findInstitucionIdByUserId(adminUserId);
+  if (!institucionId) return null;
+
+  // Validar que la carrera exista y sea de su institución (evita confusión con affectedRows=0)
+  const [existsRows]: any[] = await pool.query(
+    `SELECT id FROM carrera WHERE id = ? AND institucion_id = ? LIMIT 1;`,
+    [carreraId, institucionId]
+  );
+
+  if (!existsRows || existsRows.length === 0) return null;
+
+  await pool.query(
+    `UPDATE carrera SET nombre = ? WHERE id = ? AND institucion_id = ?;`,
+    [nombre, carreraId, institucionId]
+  );
+
+  return { id: carreraId, nombre };
+}
