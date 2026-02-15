@@ -69,19 +69,27 @@
     <div class="flex items-center gap-2">
       @if (isActiva(m)) {
       <p-button
-        label="Desactivar"
+        text
+        rounded
         size="small"
-        icon="pi pi-times"
-        severity="warn"
+        icon="pi pi-eye-slash"
+        severity="danger"
+        pTooltip="Desactivar materia"
+        tooltipPosition="left"
+        positionLeft="-5"
         [disabled]="updatingId() === m.materia_id"
         (onClick)="desactivar(m)"
       ></p-button>
       } @else {
       <p-button
-        label="Activar"
+        text
+        rounded
         size="small"
-        icon="pi pi-check"
+        icon="pi pi-eye"
         severity="success"
+        pTooltip="Activar materia"
+        tooltipPosition="left"
+        positionLeft="-5"
         [disabled]="updatingId() === m.materia_id"
         (onClick)="activar(m)"
       ></p-button>

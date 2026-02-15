@@ -19,6 +19,7 @@ import {
   Docente,
   MateriaDeCarrera,
 } from '../../services/admin-materias.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-admin-carrera-materias',
@@ -30,6 +31,7 @@ import {
     InputTextModule,
     DropdownModule,
     ToastModule,
+    TooltipModule
   ],
   providers: [MessageService],
   templateUrl: './admin-carrera-materias.component.html',
