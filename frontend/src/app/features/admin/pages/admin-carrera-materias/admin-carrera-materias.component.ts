@@ -20,6 +20,7 @@ import {
   MateriaDeCarrera,
 } from '../../services/admin-materias.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { AdminCarrerasService } from '../../services/admin-carreras.service';
 
 @Component({
   selector: 'app-admin-carrera-materias',
@@ -40,11 +41,13 @@ import { TooltipModule } from 'primeng/tooltip';
 export class AdminCarreraMateriasComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private service = inject(AdminMateriasService);
+  private materiasService = inject(AdminMateriasService);
+  private carrerasService = inject(AdminCarrerasService);
   private destroyRef = inject(DestroyRef);
   private messageService = inject(MessageService);
 
   carreraId = signal<number | null>(null);
+  carreraNombre = signal<string | null>(null);
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -70,6 +73,14 @@ export class AdminCarreraMateriasComponent {
       this.loading.set(false);
       return;
     }
+
+    this.carrerasService
+      .getCarreraById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => this.carreraNombre.set(res.carrera.nombre),
+        error: () => this.carreraNombre.set(null),
+      });
 
     this.carreraId.set(id);
     this.loadAll();
@@ -112,7 +123,7 @@ export class AdminCarreraMateriasComponent {
 
     this.creating.set(true);
 
-    this.service
+    this.materiasService
       .createMateria(carreraId, nombre, docenteId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -155,7 +166,7 @@ export class AdminCarreraMateriasComponent {
   desactivar(m: MateriaDeCarrera) {
     this.updatingId.set(m.materia_id);
 
-    this.service
+    this.materiasService
       .desactivarMateria(m.materia_id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -184,7 +195,7 @@ export class AdminCarreraMateriasComponent {
   activar(m: MateriaDeCarrera) {
     this.updatingId.set(m.materia_id);
 
-    this.service
+    this.materiasService
       .activarMateria(m.materia_id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -248,7 +259,7 @@ export class AdminCarreraMateriasComponent {
 
     this.updatingId.set(m.materia_id);
 
-    this.service
+    this.materiasService
       .updateMateria(m.materia_id, nombre, docenteId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -291,7 +302,7 @@ export class AdminCarreraMateriasComponent {
     this.error.set(null);
 
     // Obtengo docentes
-    this.service
+    this.materiasService
       .getDocentes()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -316,7 +327,7 @@ export class AdminCarreraMateriasComponent {
     const carreraId = this.carreraId();
     if (!carreraId) return;
 
-    this.service
+    this.materiasService
       .getMateriasByCarrera(carreraId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

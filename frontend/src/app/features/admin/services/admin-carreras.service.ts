@@ -5,13 +5,25 @@ import { Observable } from 'rxjs';
 export interface Carrera {
   id: number;
   nombre: string;
-  activa: number;     
+  activa: number;
   created_at: string;
 }
 
 interface CarrerasResponse {
   ok: boolean;
   carreras: Carrera[];
+}
+
+export interface CarreraDetalle {
+  id: number;
+  nombre: string;
+  activa: number;
+  created_at: string;
+}
+
+interface CarreraDetalleResponse {
+  ok: boolean;
+  carrera: CarreraDetalle;
 }
 
 interface CreateCarreraResponse {
@@ -28,6 +40,10 @@ export class AdminCarrerasService {
     return this.http.get<CarrerasResponse>(this.apiUrl);
   }
 
+  getCarreraById(id: number) {
+    return this.http.get<CarreraDetalleResponse>(`${this.apiUrl}/${id}`);
+  }
+
   createCarrera(nombre: string): Observable<CreateCarreraResponse> {
     return this.http.post<CreateCarreraResponse>(this.apiUrl, { nombre });
   }
@@ -35,15 +51,18 @@ export class AdminCarrerasService {
   activarCarrera(id: number) {
     return this.http.patch<{ ok: boolean }>(`${this.apiUrl}/${id}/activar`, {});
   }
-  
+
   desactivarCarrera(id: number) {
-    return this.http.patch<{ ok: boolean }>(`${this.apiUrl}/${id}/desactivar`, {});
+    return this.http.patch<{ ok: boolean }>(
+      `${this.apiUrl}/${id}/desactivar`,
+      {}
+    );
   }
 
   updateCarrera(id: number, nombre: string) {
-    return this.http.patch<{ ok: boolean; carrera: { id: number; nombre: string } }>(
-      `${this.apiUrl}/${id}`,
-      { nombre }
-    );
-  }  
+    return this.http.patch<{
+      ok: boolean;
+      carrera: { id: number; nombre: string };
+    }>(`${this.apiUrl}/${id}`, { nombre });
+  }
 }
