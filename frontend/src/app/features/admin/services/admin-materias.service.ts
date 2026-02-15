@@ -85,4 +85,10 @@ export class AdminMateriasService {
     );
   }
   
+  updateMateria(materiaId: number, nombre: string, docenteId: number) {
+    return this.http.patch<{ ok: boolean }>(
+      `${this.baseUrl}/materias/${materiaId}`,
+      { nombre, docente_id: docenteId }
+    );
+  }  
 }

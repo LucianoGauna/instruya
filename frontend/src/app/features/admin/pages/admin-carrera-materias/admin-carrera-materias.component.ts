@@ -31,7 +31,7 @@ import { TooltipModule } from 'primeng/tooltip';
     InputTextModule,
     DropdownModule,
     ToastModule,
-    TooltipModule
+    TooltipModule,
   ],
   providers: [MessageService],
   templateUrl: './admin-carrera-materias.component.html',
@@ -56,6 +56,10 @@ export class AdminCarreraMateriasComponent {
   docenteSeleccionadoId = signal<number | null>(null);
   creating = signal(false);
   updatingId = signal<number | null>(null);
+
+  editingId = signal<number | null>(null);
+  editNombre = signal('');
+  editDocenteId = signal<number | null>(null);
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -202,6 +206,82 @@ export class AdminCarreraMateriasComponent {
             life: 3500,
           });
           this.updatingId.set(null);
+        },
+      });
+  }
+
+  startEdit(m: MateriaDeCarrera) {
+    this.editingId.set(m.materia_id);
+    this.editNombre.set(m.materia_nombre);
+    this.editDocenteId.set(m.docente_id);
+  }
+
+  cancelEdit() {
+    this.editingId.set(null);
+    this.editNombre.set('');
+    this.editDocenteId.set(null);
+  }
+
+  saveEdit(m: MateriaDeCarrera) {
+    const nombre = this.editNombre().trim();
+    const docenteId = this.editDocenteId();
+
+    if (!nombre) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Falta nombre',
+        detail: 'El nombre es requerido',
+        life: 3000,
+      });
+      return;
+    }
+
+    if (!docenteId) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Falta docente',
+        detail: 'Seleccioná un docente',
+        life: 3000,
+      });
+      return;
+    }
+
+    this.updatingId.set(m.materia_id);
+
+    this.service
+      .updateMateria(m.materia_id, nombre, docenteId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Materia actualizada',
+            detail: 'Se guardaron los cambios',
+            life: 3000,
+          });
+
+          this.updatingId.set(null);
+          this.cancelEdit();
+          this.loadMaterias();
+        },
+        error: (err) => {
+          this.updatingId.set(null);
+
+          const msg =
+            err?.status === 409
+              ? 'Ya existe una materia con ese nombre en la carrera'
+              : err?.status === 404
+              ? 'Materia o docente no encontrado'
+              : err?.status === 400
+              ? 'Datos inválidos'
+              : 'No se pudo actualizar la materia';
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: msg,
+            life: 3500,
+          });
         },
       });
   }
