@@ -2,9 +2,11 @@ import { Router } from 'express';
 import { authMiddleware } from '../auth/auth.middleware';
 import {
   activarCarrera,
+  activarMateria,
   createCarrera,
   createMateriaEnCarrera,
   desactivarCarrera,
+  desactivarMateria,
   getCarreras,
   getDocentes,
   getMateriasDeCarrera,
@@ -69,6 +71,20 @@ router.post(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   createMateriaEnCarrera
+);
+
+router.patch(
+  '/materias/:id/activar',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  activarMateria
+);
+
+router.patch(
+  '/materias/:id/desactivar',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  desactivarMateria
 );
 
 export default router;

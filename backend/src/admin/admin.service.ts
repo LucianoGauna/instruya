@@ -152,6 +152,7 @@ export async function findMateriasByCarreraForAdmin(
     SELECT
       m.id AS materia_id,
       m.nombre AS materia_nombre,
+      m.activa AS activa,
       m.docente_id,
       d.nombre AS docente_nombre,
       d.apellido AS docente_apellido,
@@ -222,4 +223,24 @@ export async function createMateriaForAdminInCarrera(
     carrera_id: carreraId,
     docente_id: docenteId,
   };
+}
+
+export async function setMateriaActivaForAdmin(
+  adminUserId: number,
+  materiaId: number,
+  activa: 0 | 1
+): Promise<boolean> {
+  const [result]: any[] = await pool.query(
+    `
+    UPDATE materia m
+    INNER JOIN carrera c ON c.id = m.carrera_id
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    SET m.activa = ?
+    WHERE admin.id = ?
+      AND m.id = ?;
+    `,
+    [activa, adminUserId, materiaId]
+  );
+
+  return result.affectedRows > 0;
 }

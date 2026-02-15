@@ -8,6 +8,7 @@ import {
   findDocentesByAdminUserId,
   findMateriasByCarreraForAdmin,
   createMateriaForAdminInCarrera,
+  setMateriaActivaForAdmin,
 } from './admin.service';
 
 export async function getCarreras(req: Request, res: Response) {
@@ -254,6 +255,56 @@ export async function createMateriaEnCarrera(req: Request, res: Response) {
     }
 
     console.error('Error en createMateriaEnCarrera:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function activarMateria(req: Request, res: Response) {
+  const materiaId = Number(req.params.id);
+  if (!Number.isFinite(materiaId)) {
+    return res.status(400).json({ ok: false, message: 'ID inválido' });
+  }
+
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+    const ok = await setMateriaActivaForAdmin(adminUserId, materiaId, 1);
+
+    if (!ok) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Materia no encontrada' });
+    }
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error en activarMateria:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function desactivarMateria(req: Request, res: Response) {
+  const materiaId = Number(req.params.id);
+  if (!Number.isFinite(materiaId)) {
+    return res.status(400).json({ ok: false, message: 'ID inválido' });
+  }
+
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+    const ok = await setMateriaActivaForAdmin(adminUserId, materiaId, 0);
+
+    if (!ok) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Materia no encontrada' });
+    }
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error en desactivarMateria:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });
