@@ -45,22 +45,50 @@
 </div>
 
 @if (loading()) {
-  <p>Cargando...</p>
+<p>Cargando...</p>
 } @else if (error()) {
-  <p class="text-red-600">{{ error() }}</p>
+<p class="text-red-600">{{ error() }}</p>
+} @else { @if (materias().length === 0) {
+<p>No hay materias en esta carrera.</p>
 } @else {
-  @if (materias().length === 0) {
-    <p>No hay materias en esta carrera.</p>
-  } @else {
-    <div class="space-y-3">
-      @for (m of materias(); track m.materia_id) {
-        <div class="rounded-lg border p-4">
-          <div class="font-medium">{{ m.materia_nombre }}</div>
-          <div class="text-sm text-gray-600">
-            Docente: {{ m.docente_apellido }}, {{ m.docente_nombre }} ({{ m.docente_email }})
-          </div>
-        </div>
+<div class="space-y-3">
+  @for (m of materias(); track m.materia_id) {
+  <div class="rounded-lg border p-4 flex items-center justify-between">
+    <div>
+      <div class="font-medium">{{ m.materia_nombre }}</div>
+      <div class="text-sm text-gray-600">
+        Docente: {{ m.docente_apellido }}, {{ m.docente_nombre }} ({{
+          m.docente_email
+        }})
+      </div>
+      <div class="text-sm text-gray-600 mt-1">
+        Estado: <span>{{ isActiva(m) ? "Activa" : "Inactiva" }}</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      @if (isActiva(m)) {
+      <p-button
+        label="Desactivar"
+        size="small"
+        icon="pi pi-times"
+        severity="warn"
+        [disabled]="updatingId() === m.materia_id"
+        (onClick)="desactivar(m)"
+      ></p-button>
+      } @else {
+      <p-button
+        label="Activar"
+        size="small"
+        icon="pi pi-check"
+        severity="success"
+        [disabled]="updatingId() === m.materia_id"
+        (onClick)="activar(m)"
+      ></p-button>
       }
     </div>
+  </div>
+
   }
-}
+</div>
+} }

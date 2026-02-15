@@ -13,6 +13,7 @@ export interface Docente {
 export interface MateriaDeCarrera {
   materia_id: number;
   materia_nombre: string;
+  activa: number;
   docente_id: number;
   docente_nombre: string;
   docente_apellido: string;
@@ -69,4 +70,19 @@ export class AdminMateriasService {
       { nombre, docente_id: docenteId }
     );
   }
+
+  activarMateria(materiaId: number) {
+    return this.http.patch<{ ok: boolean }>(
+      `${this.baseUrl}/materias/${materiaId}/activar`,
+      {}
+    );
+  }
+  
+  desactivarMateria(materiaId: number) {
+    return this.http.patch<{ ok: boolean }>(
+      `${this.baseUrl}/materias/${materiaId}/desactivar`,
+      {}
+    );
+  }
+  
 }

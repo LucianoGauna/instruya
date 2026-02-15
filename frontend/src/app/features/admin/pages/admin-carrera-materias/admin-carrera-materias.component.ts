@@ -53,6 +53,7 @@ export class AdminCarreraMateriasComponent {
   nuevoNombre = signal('');
   docenteSeleccionadoId = signal<number | null>(null);
   creating = signal(false);
+  updatingId = signal<number | null>(null);
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -70,6 +71,10 @@ export class AdminCarreraMateriasComponent {
 
   goBack() {
     this.router.navigate(['/admin/carreras']);
+  }
+
+  isActiva(m: MateriaDeCarrera): boolean {
+    return m.activa === 1;
   }
 
   createMateria() {
@@ -137,6 +142,64 @@ export class AdminCarreraMateriasComponent {
             detail: msg,
             life: 3500,
           });
+        },
+      });
+  }
+
+  desactivar(m: MateriaDeCarrera) {
+    this.updatingId.set(m.materia_id);
+
+    this.service
+      .desactivarMateria(m.materia_id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Materia desactivada',
+            detail: `"${m.materia_nombre}" quedó inactiva`,
+            life: 3000,
+          });
+          this.updatingId.set(null);
+          this.loadMaterias();
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo desactivar la materia',
+            life: 3500,
+          });
+          this.updatingId.set(null);
+        },
+      });
+  }
+
+  activar(m: MateriaDeCarrera) {
+    this.updatingId.set(m.materia_id);
+
+    this.service
+      .activarMateria(m.materia_id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Materia activada',
+            detail: `"${m.materia_nombre}" volvió a estar activa`,
+            life: 3000,
+          });
+          this.updatingId.set(null);
+          this.loadMaterias();
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo activar la materia',
+            life: 3500,
+          });
+          this.updatingId.set(null);
         },
       });
   }
