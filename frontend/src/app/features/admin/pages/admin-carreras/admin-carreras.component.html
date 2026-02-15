@@ -87,6 +87,14 @@
         [disabled]="updatingId() === c.id"
         (onClick)="startEdit(c)"
       ></p-button>
+      <p-button
+        label="Materias"
+        size="small"
+        icon="pi pi-book"
+        severity="info"
+        [disabled]="updatingId() === c.id"
+        (onClick)="verMaterias(c)"
+      ></p-button>
       } @if (isActiva(c)) {
       <p-button
         label="Desactivar"

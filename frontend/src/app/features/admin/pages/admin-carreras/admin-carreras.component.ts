@@ -257,6 +257,10 @@ export class AdminCarrerasComponent {
       });
   }
 
+  verMaterias(c: Carrera) {
+    this.router.navigate(['/admin/carreras', c.id, 'materias']);
+  }
+
   private loadCarreras() {
     this.loading.set(true);
     this.error.set(null);

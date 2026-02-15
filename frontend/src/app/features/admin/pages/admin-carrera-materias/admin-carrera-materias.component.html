@@ -1,0 +1,66 @@
+<p-toast></p-toast>
+
+<p-button
+  label="Volver a Carreras"
+  icon="pi pi-arrow-left"
+  class="mb-4"
+  severity="info"
+  (onClick)="goBack()"
+></p-button>
+
+<h1 class="text-2xl font-semibold mb-4">
+  Materias de la carrera #{{ carreraId() }}
+</h1>
+
+<div class="rounded-lg border p-4 mb-6">
+  <div class="font-medium mb-3">Crear materia</div>
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <input
+      pInputText
+      type="text"
+      class="w-full"
+      placeholder="Nombre de la materia"
+      [ngModel]="nuevoNombre()"
+      (ngModelChange)="nuevoNombre.set($event)"
+    />
+
+    <p-dropdown
+      class="w-full sm:w-96"
+      placeholder="Seleccionar docente"
+      optionLabel="label"
+      optionValue="id"
+      [options]="docentes()"
+      [ngModel]="docenteSeleccionadoId()"
+      (ngModelChange)="docenteSeleccionadoId.set($event)"
+    ></p-dropdown>
+
+    <p-button
+      label="Crear"
+      icon="pi pi-plus"
+      [disabled]="creating()"
+      (onClick)="createMateria()"
+    ></p-button>
+  </div>
+</div>
+
+@if (loading()) {
+  <p>Cargando...</p>
+} @else if (error()) {
+  <p class="text-red-600">{{ error() }}</p>
+} @else {
+  @if (materias().length === 0) {
+    <p>No hay materias en esta carrera.</p>
+  } @else {
+    <div class="space-y-3">
+      @for (m of materias(); track m.materia_id) {
+        <div class="rounded-lg border p-4">
+          <div class="font-medium">{{ m.materia_nombre }}</div>
+          <div class="text-sm text-gray-600">
+            Docente: {{ m.docente_apellido }}, {{ m.docente_nombre }} ({{ m.docente_email }})
+          </div>
+        </div>
+      }
+    </div>
+  }
+}
