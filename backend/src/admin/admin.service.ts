@@ -289,3 +289,26 @@ export async function updateMateriaForAdmin(
 
   return 'OK';
 }
+
+export async function findCarreraByIdForAdmin(
+  adminUserId: number,
+  carreraId: number
+) {
+  const [rows]: any[] = await pool.query(
+    `
+    SELECT
+      c.id,
+      c.nombre,
+      c.activa,
+      c.created_at
+    FROM carrera c
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    WHERE admin.id = ?
+      AND c.id = ?
+    LIMIT 1;
+    `,
+    [adminUserId, carreraId]
+  );
+
+  return rows.length ? rows[0] : null;
+}

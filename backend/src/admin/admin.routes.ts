@@ -7,6 +7,7 @@ import {
   createMateriaEnCarrera,
   desactivarCarrera,
   desactivarMateria,
+  getCarreraById,
   getCarreras,
   getDocentes,
   getMateriasDeCarrera,
@@ -93,6 +94,13 @@ router.patch(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   updateMateria
+);
+
+router.get(
+  '/carreras/:id',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  getCarreraById
 );
 
 export default router;
