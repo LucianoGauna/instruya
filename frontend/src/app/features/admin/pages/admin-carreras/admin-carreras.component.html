@@ -80,36 +80,52 @@
     <div class="flex items-center gap-2">
       @if (editingId() !== c.id) {
       <p-button
+        text
         rounded
         size="small"
         icon="pi pi-pencil"
         severity="secondary"
+        pTooltip="Editar carrera"
+        tooltipPosition="left"
+        positionLeft="-5"
         [disabled]="updatingId() === c.id"
         (onClick)="startEdit(c)"
       ></p-button>
       <p-button
-        label="Materias"
+        text
+        rounded
         size="small"
         icon="pi pi-book"
-        severity="info"
+        severity="secondary"
+        pTooltip="Ver materias"
+        tooltipPosition="left"
+        positionLeft="-5"
         [disabled]="updatingId() === c.id"
         (onClick)="verMaterias(c)"
       ></p-button>
       } @if (isActiva(c)) {
       <p-button
-        label="Desactivar"
+        text
+        rounded
         size="small"
         icon="pi pi-times"
-        severity="warn"
+        severity="danger"
+        pTooltip="Desactivar carrera"
+        tooltipPosition="left"
+        positionLeft="-5"
         [disabled]="updatingId() === c.id"
         (onClick)="desactivar(c)"
       ></p-button>
       } @else {
       <p-button
-        label="Activar"
+      text
+        rounded
         size="small"
-        icon="pi pi-check"
+        icon="pi pi-eye"
         severity="success"
+        pTooltip="Activar carrera"
+        tooltipPosition="left"
+        positionLeft="-5"
         [disabled]="updatingId() === c.id"
         (onClick)="activar(c)"
       ></p-button>

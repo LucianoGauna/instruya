@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-admin-carreras',
@@ -27,6 +28,7 @@ import { InputTextModule } from 'primeng/inputtext';
     FormsModule,
     InputTextModule,
     ToastModule,
+    TooltipModule,
   ],
   providers: [MessageService],
   templateUrl: './admin-carreras.component.html',
