@@ -1,5 +1,5 @@
 import { pool } from '../db';
-import { CreateMateriaResult } from './admin.types';
+import { CreateMateriaResult, UpdateMateriaResult } from './admin.types';
 
 export async function findCarrerasByAdminUserId(adminUserId: number) {
   const query = `
@@ -243,4 +243,49 @@ export async function setMateriaActivaForAdmin(
   );
 
   return result.affectedRows > 0;
+}
+
+export async function updateMateriaForAdmin(
+  adminUserId: number,
+  materiaId: number,
+  nombre: string,
+  docenteId: number
+): Promise<UpdateMateriaResult> {
+  // Validar docente (misma institución, rol DOCENTE, activo)
+  const [docRows]: any[] = await pool.query(
+    `
+    SELECT u.id
+    FROM usuario u
+    INNER JOIN usuario admin ON admin.institucion_id = u.institucion_id
+    WHERE admin.id = ?
+      AND u.id = ?
+      AND u.rol = 'DOCENTE'
+      AND u.activo = 1
+    LIMIT 1;
+    `,
+    [adminUserId, docenteId]
+  );
+
+  if (!docRows || docRows.length === 0) {
+    return 'DOCENTE_NOT_FOUND';
+  }
+
+  // Update SOLO si la materia pertenece a una carrera de la institución del admin
+  const [result]: any[] = await pool.query(
+    `
+    UPDATE materia m
+    INNER JOIN carrera c ON c.id = m.carrera_id
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    SET m.nombre = ?, m.docente_id = ?
+    WHERE admin.id = ?
+      AND m.id = ?;
+    `,
+    [nombre, docenteId, adminUserId, materiaId]
+  );
+
+  if (result.affectedRows === 0) {
+    return 'MATERIA_NOT_FOUND';
+  }
+
+  return 'OK';
 }

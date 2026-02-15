@@ -9,6 +9,7 @@ import {
   findMateriasByCarreraForAdmin,
   createMateriaForAdminInCarrera,
   setMateriaActivaForAdmin,
+  updateMateriaForAdmin,
 } from './admin.service';
 
 export async function getCarreras(req: Request, res: Response) {
@@ -305,6 +306,63 @@ export async function desactivarMateria(req: Request, res: Response) {
     return res.json({ ok: true });
   } catch (error) {
     console.error('Error en desactivarMateria:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function updateMateria(req: Request, res: Response) {
+  const materiaId = Number(req.params.id);
+  if (!Number.isFinite(materiaId)) {
+    return res.status(400).json({ ok: false, message: 'ID inválido' });
+  }
+
+  const { nombre, docente_id } = req.body;
+
+  if (typeof nombre !== 'string' || nombre.trim().length === 0) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'El nombre es requerido' });
+  }
+
+  const docenteId = Number(docente_id);
+  if (!Number.isFinite(docenteId)) {
+    return res.status(400).json({ ok: false, message: 'docente_id inválido' });
+  }
+
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+
+    const result = await updateMateriaForAdmin(
+      adminUserId,
+      materiaId,
+      nombre.trim(),
+      docenteId
+    );
+
+    if (result === 'DOCENTE_NOT_FOUND') {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Docente no encontrado' });
+    }
+
+    if (result === 'MATERIA_NOT_FOUND') {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Materia no encontrada' });
+    }
+
+    return res.json({ ok: true });
+  } catch (error: any) {
+    if (error?.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({
+        ok: false,
+        message: 'Ya existe una materia con ese nombre en la carrera',
+      });
+    }
+
+    console.error('Error en updateMateria:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

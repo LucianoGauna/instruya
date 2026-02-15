@@ -11,6 +11,7 @@ import {
   getDocentes,
   getMateriasDeCarrera,
   updateCarrera,
+  updateMateria,
 } from './admin.controller';
 import { requireRole } from '../auth/require-role.middleware';
 import { Roles } from '../auth/auth.types';
@@ -85,6 +86,13 @@ router.patch(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   desactivarMateria
+);
+
+router.patch(
+  '/materias/:id',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  updateMateria
 );
 
 export default router;
