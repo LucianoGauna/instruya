@@ -49,4 +49,8 @@ export class DocenteMateriasComponent {
   goBack() {
     this.router.navigate(['/docente/inicio']);
   }  
+
+  verInscriptos(m: DocenteMateria) {
+    this.router.navigate(['/docente/mis-materias', m.materia_id, 'inscriptos']);
+  }
 }

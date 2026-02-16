@@ -1,0 +1,31 @@
+<p-button
+  label="Volver"
+  icon="pi pi-arrow-left"
+  class="mb-4"
+  (onClick)="goBack()"
+></p-button>
+
+<h1 class="text-2xl font-semibold mb-4">
+  Inscriptos – Materia #{{ materiaId() }}
+</h1>
+
+@if (loading()) {
+<p>Cargando...</p>
+} @else if (error()) {
+<p class="text-red-600">{{ error() }}</p>
+} @else { @if (inscriptos().length === 0) {
+<p>No hay alumnos inscriptos.</p>
+} @else {
+<div class="space-y-3">
+  @for (a of inscriptos(); track a.alumno_id) {
+  <div class="rounded-lg border p-4">
+    <div class="font-medium">{{ a.apellido }}, {{ a.nombre }}</div>
+    <div class="text-sm text-gray-600">{{ a.email }}</div>
+    <div class="text-sm mt-2">
+      Estado: {{ a.estado }} · Año: {{ a.anio ?? "-" }} · Período:
+      {{ a.periodo ?? "-" }}
+    </div>
+  </div>
+  }
+</div>
+} }

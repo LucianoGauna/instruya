@@ -1,9 +1,14 @@
-import { Routes } from "@angular/router";
-import { DocenteMateriasComponent } from "./pages/mis-materias/docente-materias.component";
-import { DocenteInicioComponent } from "./pages/docente-inicio/docente-inicio.component";
+import { Routes } from '@angular/router';
+import { DocenteMateriasComponent } from './pages/mis-materias/docente-materias.component';
+import { DocenteInicioComponent } from './pages/docente-inicio/docente-inicio.component';
+import { DocenteInscriptosComponent } from './pages/inscriptos/docente-inscriptos.component';
 
 export const DOCENTE_ROUTES: Routes = [
   { path: 'inicio', component: DocenteInicioComponent },
   { path: 'mis-materias', component: DocenteMateriasComponent },
+  {
+    path: 'mis-materias/:materiaId/inscriptos',
+    component: DocenteInscriptosComponent,
+  },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
 ];

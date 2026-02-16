@@ -8,20 +8,27 @@
 <h1 class="text-2xl font-semibold mb-4">Mis materias (Docente)</h1>
 
 @if (loading()) {
-  <p>Cargando...</p>
+<p>Cargando...</p>
 } @else if (error()) {
-  <p class="text-red-600">{{ error() }}</p>
+<p class="text-red-600">{{ error() }}</p>
+} @else { @if (materias().length === 0) {
+<p>No tenés materias asignadas.</p>
 } @else {
-  @if (materias().length === 0) {
-    <p>No tenés materias asignadas.</p>
-  } @else {
-    <div class="space-y-3">
-      @for (m of materias(); track m.materia_id) {
-        <div class="rounded-lg border p-4">
-          <div class="font-medium">{{ m.materia_nombre }}</div>
-          <div class="text-sm text-gray-600">{{ m.carrera_nombre }}</div>
-        </div>
-      }
+<div class="space-y-3">
+  @for (m of materias(); track m.materia_id) {
+  <div class="rounded-lg border p-4 flex items-center justify-between gap-4">
+    <div>
+      <div class="font-medium">{{ m.materia_nombre }}</div>
+      <div class="text-sm text-gray-600">{{ m.carrera_nombre }}</div>
     </div>
+
+    <p-button
+      label="Ver inscriptos"
+      icon="pi pi-users"
+      size="small"
+      (onClick)="verInscriptos(m)"
+    ></p-button>
+  </div>
   }
-}
+</div>
+} }
