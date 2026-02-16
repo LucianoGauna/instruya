@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
 import { AuthService } from '../../../core/auth/auth.service';
-import { UserRole } from '../../../shared/types/user.types';
+import { homeRouteForRole } from '../../../core/auth/home-route.util';
 
 @Component({
   selector: 'app-login',
@@ -27,39 +27,21 @@ export class LoginPageComponent {
 
   submit() {
     if (this.form.invalid) return;
-  
+
     const { email, password } = this.form.value;
-  
+
     this.loginService.login({ email, password }).subscribe({
       next: (res) => {
         console.log('LOGIN OK:', res);
-  
+
         // Guardar sesión
         this.auth.login(res.token, res.user);
-        const rol = res.user.rol;
-  
         // Redirigir según rol
-        switch (rol) {
-          case UserRole.SUPERADMIN:
-            this.router.navigate(['/superadmin/dashboard']);
-            break;
-          case UserRole.ADMIN:
-            this.router.navigate(['/admin/dashboard']);
-            break;
-          case UserRole.DOCENTE:
-            this.router.navigate(['/docente/inicio']);
-            break;
-          case UserRole.ALUMNO:
-            this.router.navigate(['/alumno/inicio']);
-            break;
-          default:
-            console.error('Rol desconocido:', rol);
-        }
+        this.router.navigate([homeRouteForRole(res.user.rol)]);
       },
       error: (err) => {
         console.error('LOGIN ERROR:', err);
-      }
+      },
     });
   }
-  
 }
