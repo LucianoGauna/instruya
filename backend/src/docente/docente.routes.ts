@@ -4,6 +4,8 @@ import { Roles } from '../auth/auth.types';
 import {
   getMisMateriasDocente,
   getInscriptosByMateria,
+  createCalificacion,
+  updateCalificacion,
 } from './docente.controller';
 import { requireRole } from '../auth/require-role.middleware';
 
@@ -21,6 +23,20 @@ router.get(
   authMiddleware,
   requireRole([Roles.DOCENTE]),
   getInscriptosByMateria
+);
+
+router.post(
+  '/materias/:materiaId/calificaciones',
+  authMiddleware,
+  requireRole([Roles.DOCENTE]),
+  createCalificacion
+);
+
+router.patch(
+  '/calificaciones/:calificacionId',
+  authMiddleware,
+  requireRole([Roles.DOCENTE]),
+  updateCalificacion
 );
 
 export default router;
