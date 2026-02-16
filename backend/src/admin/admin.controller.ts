@@ -13,9 +13,9 @@ import {
   findCarreraByIdForAdmin,
 } from './admin.service';
 
-export async function getCarreras(req: Request, res: Response) {
+export async function getCarreras(req: AuthedRequest, res: Response) {
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const carreras = await findCarrerasByAdminUserId(adminUserId);
     return res.json({ ok: true, carreras });
   } catch (error) {
@@ -26,9 +26,9 @@ export async function getCarreras(req: Request, res: Response) {
   }
 }
 
-export async function createCarrera(req: Request, res: Response) {
+export async function createCarrera(req: AuthedRequest, res: Response) {
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
 
     const { nombre } = req.body;
 
@@ -61,14 +61,14 @@ export async function createCarrera(req: Request, res: Response) {
   }
 }
 
-export async function desactivarCarrera(req: Request, res: Response) {
+export async function desactivarCarrera(req: AuthedRequest, res: Response) {
   const carreraId = Number(req.params.id);
   if (!Number.isFinite(carreraId)) {
     return res.status(400).json({ ok: false, message: 'ID inválido' });
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const updated = await setCarreraActivaForAdmin(adminUserId, carreraId, 0);
 
     if (!updated) {
@@ -86,14 +86,14 @@ export async function desactivarCarrera(req: Request, res: Response) {
   }
 }
 
-export async function activarCarrera(req: Request, res: Response) {
+export async function activarCarrera(req: AuthedRequest, res: Response) {
   const carreraId = Number(req.params.id);
   if (!Number.isFinite(carreraId)) {
     return res.status(400).json({ ok: false, message: 'ID inválido' });
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const updated = await setCarreraActivaForAdmin(adminUserId, carreraId, 1);
 
     if (!updated) {
@@ -111,7 +111,7 @@ export async function activarCarrera(req: Request, res: Response) {
   }
 }
 
-export async function updateCarrera(req: Request, res: Response) {
+export async function updateCarrera(req: AuthedRequest, res: Response) {
   const carreraId = Number(req.params.id);
   if (!Number.isFinite(carreraId)) {
     return res.status(400).json({ ok: false, message: 'ID inválido' });
@@ -125,7 +125,7 @@ export async function updateCarrera(req: Request, res: Response) {
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const nombreLimpio = nombre.trim();
 
     const carrera = await updateCarreraNombreForAdmin(
@@ -156,9 +156,9 @@ export async function updateCarrera(req: Request, res: Response) {
   }
 }
 
-export async function getDocentes(req: Request, res: Response) {
+export async function getDocentes(req: AuthedRequest, res: Response) {
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
 
     const docentes = await findDocentesByAdminUserId(adminUserId);
 
@@ -171,7 +171,7 @@ export async function getDocentes(req: Request, res: Response) {
   }
 }
 
-export async function getMateriasDeCarrera(req: Request, res: Response) {
+export async function getMateriasDeCarrera(req: AuthedRequest, res: Response) {
   const carreraId = Number(req.params.id);
 
   if (!Number.isFinite(carreraId)) {
@@ -179,7 +179,7 @@ export async function getMateriasDeCarrera(req: Request, res: Response) {
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
 
     const materias = await findMateriasByCarreraForAdmin(
       adminUserId,
@@ -201,7 +201,10 @@ export async function getMateriasDeCarrera(req: Request, res: Response) {
   }
 }
 
-export async function createMateriaEnCarrera(req: Request, res: Response) {
+export async function createMateriaEnCarrera(
+  req: AuthedRequest,
+  res: Response
+) {
   const carreraId = Number(req.params.id);
   if (!Number.isFinite(carreraId)) {
     return res
@@ -223,7 +226,7 @@ export async function createMateriaEnCarrera(req: Request, res: Response) {
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
 
     const result = await createMateriaForAdminInCarrera(
       adminUserId,
@@ -263,14 +266,14 @@ export async function createMateriaEnCarrera(req: Request, res: Response) {
   }
 }
 
-export async function activarMateria(req: Request, res: Response) {
+export async function activarMateria(req: AuthedRequest, res: Response) {
   const materiaId = Number(req.params.id);
   if (!Number.isFinite(materiaId)) {
     return res.status(400).json({ ok: false, message: 'ID inválido' });
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const ok = await setMateriaActivaForAdmin(adminUserId, materiaId, 1);
 
     if (!ok) {
@@ -288,14 +291,14 @@ export async function activarMateria(req: Request, res: Response) {
   }
 }
 
-export async function desactivarMateria(req: Request, res: Response) {
+export async function desactivarMateria(req: AuthedRequest, res: Response) {
   const materiaId = Number(req.params.id);
   if (!Number.isFinite(materiaId)) {
     return res.status(400).json({ ok: false, message: 'ID inválido' });
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const ok = await setMateriaActivaForAdmin(adminUserId, materiaId, 0);
 
     if (!ok) {
@@ -313,7 +316,7 @@ export async function desactivarMateria(req: Request, res: Response) {
   }
 }
 
-export async function updateMateria(req: Request, res: Response) {
+export async function updateMateria(req: AuthedRequest, res: Response) {
   const materiaId = Number(req.params.id);
   if (!Number.isFinite(materiaId)) {
     return res.status(400).json({ ok: false, message: 'ID inválido' });
@@ -333,7 +336,7 @@ export async function updateMateria(req: Request, res: Response) {
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
 
     const result = await updateMateriaForAdmin(
       adminUserId,
@@ -370,7 +373,7 @@ export async function updateMateria(req: Request, res: Response) {
   }
 }
 
-export async function getCarreraById(req: Request, res: Response) {
+export async function getCarreraById(req: AuthedRequest, res: Response) {
   const carreraId = Number(req.params.id);
 
   if (!Number.isFinite(carreraId)) {
@@ -378,7 +381,7 @@ export async function getCarreraById(req: Request, res: Response) {
   }
 
   try {
-    const adminUserId = (req as AuthedRequest).user.id;
+    const adminUserId = req.user.id;
     const carrera = await findCarreraByIdForAdmin(adminUserId, carreraId);
 
     if (!carrera) {
