@@ -22,17 +22,7 @@ export async function createCarreraForAdmin(
   adminUserId: number,
   nombre: string
 ) {
-  // Buscar institucion_id del admin
-  const [users]: any[] = await pool.query(
-    `SELECT institucion_id FROM usuario WHERE id = ? LIMIT 1;`,
-    [adminUserId]
-  );
-
-  if (!users || users.length === 0) {
-    throw new Error('Admin no encontrado');
-  }
-
-  const institucionId = users[0].institucion_id as number | null;
+  const institucionId = await findInstitucionIdByUserId(adminUserId);
 
   if (!institucionId) {
     throw new Error('El admin no tiene institución asignada');
@@ -68,19 +58,23 @@ export async function setCarreraActivaForAdmin(
   activa: 0 | 1
 ): Promise<boolean> {
   const institucionId = await findInstitucionIdByUserId(adminUserId);
+  if (!institucionId) return false;
 
-  if (!institucionId) {
-    return false;
-  }
+  const [existsRows]: any[] = await pool.query(
+    `SELECT id FROM carrera WHERE id = ? AND institucion_id = ? LIMIT 1;`,
+    [carreraId, institucionId]
+  );
 
-  const [result]: any[] = await pool.query(
+  if (!existsRows || existsRows.length === 0) return false;
+
+  await pool.query(
     `UPDATE carrera
      SET activa = ?
      WHERE id = ? AND institucion_id = ?;`,
     [activa, carreraId, institucionId]
   );
 
-  return result.affectedRows > 0;
+  return true;
 }
 
 export async function updateCarreraNombreForAdmin(
@@ -230,7 +224,25 @@ export async function setMateriaActivaForAdmin(
   materiaId: number,
   activa: 0 | 1
 ): Promise<boolean> {
-  const [result]: any[] = await pool.query(
+  // Exist check (evita falsos 404 si no cambia nada)
+  const [existsRows]: any[] = await pool.query(
+    `
+    SELECT m.id
+    FROM materia m
+    INNER JOIN carrera c ON c.id = m.carrera_id
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    WHERE admin.id = ?
+      AND m.id = ?
+    LIMIT 1;
+    `,
+    [adminUserId, materiaId]
+  );
+
+  if (!existsRows || existsRows.length === 0) {
+    return false;
+  }
+
+  await pool.query(
     `
     UPDATE materia m
     INNER JOIN carrera c ON c.id = m.carrera_id
@@ -242,7 +254,7 @@ export async function setMateriaActivaForAdmin(
     [activa, adminUserId, materiaId]
   );
 
-  return result.affectedRows > 0;
+  return true;
 }
 
 export async function updateMateriaForAdmin(
@@ -251,6 +263,24 @@ export async function updateMateriaForAdmin(
   nombre: string,
   docenteId: number
 ): Promise<UpdateMateriaResult> {
+  // Validar materia primero (pertenece a institución del admin)
+  const [matRows]: any[] = await pool.query(
+    `
+    SELECT m.id
+    FROM materia m
+    INNER JOIN carrera c ON c.id = m.carrera_id
+    INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
+    WHERE admin.id = ?
+      AND m.id = ?
+    LIMIT 1;
+    `,
+    [adminUserId, materiaId]
+  );
+
+  if (!matRows || matRows.length === 0) {
+    return 'MATERIA_NOT_FOUND';
+  }
+
   // Validar docente (misma institución, rol DOCENTE, activo)
   const [docRows]: any[] = await pool.query(
     `
@@ -270,8 +300,8 @@ export async function updateMateriaForAdmin(
     return 'DOCENTE_NOT_FOUND';
   }
 
-  // Update SOLO si la materia pertenece a una carrera de la institución del admin
-  const [result]: any[] = await pool.query(
+  // Update (sin depender de affectedRows, porque puede ser 0 si no cambia nada)
+  await pool.query(
     `
     UPDATE materia m
     INNER JOIN carrera c ON c.id = m.carrera_id
@@ -282,10 +312,6 @@ export async function updateMateriaForAdmin(
     `,
     [nombre, docenteId, adminUserId, materiaId]
   );
-
-  if (result.affectedRows === 0) {
-    return 'MATERIA_NOT_FOUND';
-  }
 
   return 'OK';
 }
