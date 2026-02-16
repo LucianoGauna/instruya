@@ -30,6 +30,7 @@ export async function findMisCalificaciones(alumnoId: number) {
       cal.tipo,
       cal.fecha,
       cal.nota,
+      cal.descripcion,
 
       m.id AS materia_id,
       m.nombre AS materia_nombre,
@@ -48,4 +49,3 @@ export async function findMisCalificaciones(alumnoId: number) {
   const [rows] = await pool.query(query, [alumnoId]);
   return rows;
 }
-
