@@ -61,3 +61,45 @@ export async function findInscriptosByMateriaForDocente(
 
   return rows;
 }
+
+export async function findCalificacionesByMateriaForDocente(
+  docenteId: number,
+  materiaId: number
+) {
+  // Validar que la materia sea del docente
+  const [matRows]: any[] = await pool.query(
+    `
+    SELECT id
+    FROM materia
+    WHERE id = ?
+      AND docente_id = ?
+    LIMIT 1;
+    `,
+    [materiaId, docenteId]
+  );
+
+  if (!matRows || matRows.length === 0) {
+    return null;
+  }
+
+  const [rows]: any[] = await pool.query(
+    `
+    SELECT
+      cal.id AS calificacion_id,
+      cal.alumno_id,
+      cal.materia_id,
+      cal.tipo,
+      cal.fecha,
+      cal.nota,
+      cal.descripcion,
+      cal.created_at
+    FROM calificacion cal
+    WHERE cal.materia_id = ?
+      AND cal.docente_id = ?
+    ORDER BY cal.fecha DESC, cal.id DESC;
+    `,
+    [materiaId, docenteId]
+  );
+
+  return rows;
+}

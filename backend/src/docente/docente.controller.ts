@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import type { AuthedRequest } from '../auth/auth.types';
 import {
+  findCalificacionesByMateriaForDocente,
   findInscriptosByMateriaForDocente,
   findMisMateriasDocente,
 } from './docente.service';
@@ -18,10 +19,7 @@ export async function getMisMateriasDocente(req: Request, res: Response) {
   }
 }
 
-export async function getInscriptosByMateria(
-  req: Request,
-  res: Response
-) {
+export async function getInscriptosByMateria(req: Request, res: Response) {
   const materiaId = Number(req.params.materiaId);
 
   if (!Number.isFinite(materiaId)) {
@@ -42,7 +40,31 @@ export async function getInscriptosByMateria(
         .json({ ok: false, message: 'Materia no encontrada' });
     }
 
-    return res.json({ ok: true, inscriptos });
+    const calificaciones = await findCalificacionesByMateriaForDocente(
+      docenteId,
+      materiaId
+    );
+
+    if (calificaciones === null) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Materia no encontrada' });
+    }
+
+    const califByAlumno = new Map<number, any[]>();
+    for (const c of calificaciones) {
+      const alumnoId = Number(c.alumno_id);
+      const arr = califByAlumno.get(alumnoId) ?? [];
+      arr.push(c);
+      califByAlumno.set(alumnoId, arr);
+    }
+
+    const inscriptosConNotas = (inscriptos as any[]).map((i) => ({
+      ...i,
+      calificaciones: califByAlumno.get(Number(i.alumno_id)) ?? [],
+    }));
+
+    return res.json({ ok: true, inscriptos: inscriptosConNotas });
   } catch (error) {
     console.error('Error en getInscriptosByMateria:', error);
     return res
