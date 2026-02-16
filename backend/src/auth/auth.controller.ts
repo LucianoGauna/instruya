@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { findUserByEmailAndPassword } from './auth.service';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret } from './auth.utils';
 
 export async function login(req: Request, res: Response) {
   try {
@@ -9,7 +10,7 @@ export async function login(req: Request, res: Response) {
     if (!email || !password) {
       return res.status(400).json({
         ok: false,
-        message: 'Email y contraseña son requeridos'
+        message: 'Email y contraseña son requeridos',
       });
     }
 
@@ -19,18 +20,14 @@ export async function login(req: Request, res: Response) {
     if (!user) {
       return res.status(401).json({
         ok: false,
-        message: 'Credenciales inválidas'
+        message: 'Credenciales inválidas',
       });
     }
 
     // Crear token (JWT)
     const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        rol: user.rol
-      },
-      process.env.JWT_SECRET || 'dev-secret',
+      { id: user.id, email: user.email, rol: user.rol },
+      getJwtSecret(),
       { expiresIn: '12h' }
     );
 
@@ -40,15 +37,14 @@ export async function login(req: Request, res: Response) {
       user: {
         id: user.id,
         email: user.email,
-        rol: user.rol
-      }
+        rol: user.rol,
+      },
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       ok: false,
-      message: 'Error interno en el servidor'
+      message: 'Error interno en el servidor',
     });
   }
 }
