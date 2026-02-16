@@ -8,4 +8,5 @@ export const ALUMNO_ROUTES: Routes = [
   { path: 'mis-materias', component: AlumnoMisMateriasComponent },
   { path: 'mis-calificaciones', component: MisCalificacionesComponent },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+  { path: '**', redirectTo: 'inicio' },
 ];

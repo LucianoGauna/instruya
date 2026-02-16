@@ -11,4 +11,5 @@ export const DOCENTE_ROUTES: Routes = [
     component: DocenteInscriptosComponent,
   },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+  { path: '**', redirectTo: 'inicio' },
 ];

@@ -8,4 +8,5 @@ export const ADMIN_ROUTES: Routes = [
   { path: 'carreras', component: AdminCarrerasComponent },
   { path: 'carreras/:id/materias', component: AdminCarreraMateriasComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '**', redirectTo: 'dashboard' },
 ];
