@@ -7,20 +7,8 @@ import {
 
 export async function getMisMateriasDocente(req: Request, res: Response) {
   try {
-    const authedReq = req as AuthedRequest;
-
-    if (!authedReq.user) {
-      return res.status(401).json({ ok: false, message: 'No autenticado' });
-    }
-
-    if (authedReq.user.rol !== 'DOCENTE') {
-      return res.status(403).json({ ok: false, message: 'No autorizado' });
-    }
-
-    const docenteId = authedReq.user.id;
-
+    const docenteId = (req as AuthedRequest).user.id;
     const materias = await findMisMateriasDocente(docenteId);
-
     return res.json({ ok: true, materias });
   } catch (error) {
     console.error('Error en getMisMateriasDocente:', error);
@@ -30,7 +18,10 @@ export async function getMisMateriasDocente(req: Request, res: Response) {
   }
 }
 
-export async function getInscriptosByMateria(req: Request, res: Response) {
+export async function getInscriptosByMateria(
+  req: Request,
+  res: Response
+) {
   const materiaId = Number(req.params.materiaId);
 
   if (!Number.isFinite(materiaId)) {
