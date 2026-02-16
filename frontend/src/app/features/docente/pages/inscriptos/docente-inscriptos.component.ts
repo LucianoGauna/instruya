@@ -9,7 +9,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
-import { DocenteService, Inscripto } from '../../services/docente.service';
+import { DocenteService } from '../../services/docente.service';
+import { Inscripto } from '../../types/docente.types';
 
 @Component({
   standalone: true,
