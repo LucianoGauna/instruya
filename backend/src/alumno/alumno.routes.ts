@@ -6,7 +6,18 @@ import { getMisMaterias, getMisCalificaciones } from './alumno.controller';
 
 const router = Router();
 
-router.get('/mis-materias', authMiddleware, requireRole([Roles.ALUMNO]), getMisMaterias);
-router.get('/mis-calificaciones', authMiddleware, requireRole([Roles.ALUMNO]), getMisCalificaciones);
+router.get(
+  '/mis-materias',
+  authMiddleware,
+  requireRole([Roles.ALUMNO]),
+  getMisMaterias
+);
+
+router.get(
+  '/mis-calificaciones',
+  authMiddleware,
+  requireRole([Roles.ALUMNO]),
+  getMisCalificaciones
+);
 
 export default router;
