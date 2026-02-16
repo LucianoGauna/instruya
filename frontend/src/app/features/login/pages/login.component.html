@@ -1,38 +1,52 @@
+<p-toast></p-toast>
 <div class="flex h-screen">
-
-    <div class="hidden lg:flex w-1/2 bg-indigo-600 text-white items-center justify-center">
-      <div class="text-center px-10">
-        <h1 class="text-4xl font-bold mb-4">Instruya</h1>
-        <p class="text-lg opacity-90">
-          Plataforma de gestión académica.
-        </p>
-      </div>
+  <div
+    class="hidden lg:flex w-1/2 bg-indigo-600 text-white items-center justify-center"
+  >
+    <div class="text-center px-10">
+      <h1 class="text-4xl font-bold mb-4">Instruya</h1>
+      <p class="text-lg opacity-90">Plataforma de gestión académica.</p>
     </div>
-  
-    <div class="w-full lg:w-1/2 flex items-center justify-center px-6">
-  
-      <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-sm">
-  
-        <h2 class="text-2xl font-bold mb-6">Iniciar sesión</h2>
-  
-        <!-- Email -->
-        <div class="mb-4">
-          <label class="block mb-1">Email</label>
-          <input pInputText type="email" formControlName="email" class="w-full"/>
-        </div>
-  
-        <!-- Password -->
-        <div class="mb-4">
-          <label class="block mb-1">Contraseña</label>
-          <input pInputText type="password" formControlName="password" class="w-full"/>
-        </div>
-  
-        <!-- Button -->
-        <button pButton type="submit" label="Entrar" class="w-full"></button>
-  
-      </form>
-  
-    </div>
-  
   </div>
-  
+
+  <div class="w-full lg:w-1/2 flex items-center justify-center px-6">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-sm">
+      <h2 class="text-2xl font-bold mb-6">Iniciar sesión</h2>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label class="block mb-1">Email</label>
+        <input pInputText type="email" formControlName="email" class="w-full" />
+        @if ((form.get('email')?.invalid) && (form.get('email')?.touched)) {
+        <small class="text-red-600">
+          @if (form.get('email')?.errors?.['required']) { El email es requerido.
+          } @else if (form.get('email')?.errors?.['email']) { Formato de email
+          inválido. }
+        </small>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <label class="block mb-1">Contraseña</label>
+        <input
+          pInputText
+          type="password"
+          formControlName="password"
+          class="w-full"
+        />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <small class="text-red-600">La contraseña es requerida.</small>
+        }
+      </div>
+
+      <button
+        pButton
+        type="submit"
+        label="Entrar"
+        class="w-full"
+        [disabled]="form.invalid || loading()"
+      ></button>
+    </form>
+  </div>
+</div>
