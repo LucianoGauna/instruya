@@ -1,17 +1,6 @@
 import { pool } from '../db';
 import bcrypt from 'bcrypt';
-
-export interface User {
-  id: number;
-  nombre: string;
-  apellido: string;
-  email: string;
-  contrasenia_hash: string;
-  rol: 'SUPERADMIN' | 'ADMIN' | 'DOCENTE' | 'ALUMNO';
-  institucion_id: number | null;
-  activo: boolean;
-  created_at: Date;
-}
+import { User } from './auth.types';
 
 export async function findUserByEmailAndPassword(
   email: string,
@@ -43,7 +32,14 @@ export async function findUserByEmailAndPassword(
 
     const user = rows[0] as User;
 
-    const isValidPassword = await bcrypt.compare(password, user.contrasenia_hash);
+    if (!user.activo) {
+      return null;
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      password,
+      user.contrasenia_hash
+    );
     if (!isValidPassword) {
       return null;
     }
