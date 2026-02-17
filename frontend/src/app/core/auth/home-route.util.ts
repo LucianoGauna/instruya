@@ -12,7 +12,7 @@ export function homeRouteForRole(rol: UserRole | string): string {
 
     case UserRole.DOCENTE:
     case 'DOCENTE':
-      return '/docente/mis-materias';
+      return '/docente/inicio';
 
     case UserRole.ALUMNO:
     case 'ALUMNO':
