@@ -1,10 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../../../../../shared/components/navbar/navbar.component';
-import {
-  SidebarComponent,
-  SidebarMenuItem,
-} from '../../../../../shared/components/sidebar/sidebar.component';
+import { SidebarComponent } from '../../../../../shared/components/sidebar/sidebar.component';
+import { SidebarMenuItem } from '../../../../../shared/types/sidebar.types';
 
 @Component({
   selector: 'app-superadmin-layout',

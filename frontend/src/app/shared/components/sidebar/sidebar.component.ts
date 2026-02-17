@@ -1,11 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
 import { Router } from '@angular/router';
-
-export type SidebarMenuItem = {
-  label: string;
-  icon: string;
-  route: string;
-};
+import { SidebarMenuItem } from '../../types/sidebar.types';
 
 @Component({
   selector: 'app-sidebar',
