@@ -1,14 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../../../../../shared/components/navbar/navbar.component';
-import { SidebarComponent } from '../../../../../shared/components/sidebar/sidebar.component';
-import { SidebarMenuItem } from '../../../../../shared/types/sidebar.types';
+import { SidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
+import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
+import { SidebarMenuItem } from '../../../../shared/types/sidebar.types';
 
 @Component({
   selector: 'app-superadmin-layout',
   imports: [RouterOutlet, NavbarComponent, SidebarComponent],
   templateUrl: './superadmin-layout.component.html',
-  styleUrl: './superadmin-layout.component.css',
 })
 export class SuperadminLayoutComponent {
   sidebarOpen = signal(true);
