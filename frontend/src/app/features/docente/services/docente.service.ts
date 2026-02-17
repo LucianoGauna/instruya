@@ -1,7 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DocenteInscriptosResponse, DocenteMisMateriasResponse } from '../types/docente.types';
+import {
+  CreateCalificacionBody,
+  CreateCalificacionResponse,
+  DocenteInscriptosResponse,
+  DocenteMisMateriasResponse,
+} from '../types/docente.types';
 
 @Injectable({ providedIn: 'root' })
 export class DocenteService {
@@ -19,6 +24,16 @@ export class DocenteService {
   ): Observable<DocenteInscriptosResponse> {
     return this.http.get<DocenteInscriptosResponse>(
       `${this.baseUrl}/materias/${materiaId}/inscriptos`
+    );
+  }
+
+  createCalificacion(
+    materiaId: number,
+    body: CreateCalificacionBody
+  ): Observable<CreateCalificacionResponse> {
+    return this.http.post<CreateCalificacionResponse>(
+      `${this.baseUrl}/materias/${materiaId}/calificaciones`,
+      body
     );
   }
 }

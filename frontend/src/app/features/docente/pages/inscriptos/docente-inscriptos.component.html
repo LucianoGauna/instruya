@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <p-button
   label="Volver"
   icon="pi pi-arrow-left"
@@ -19,7 +20,15 @@
 <div class="space-y-3">
   @for (a of inscriptos(); track a.alumno_id) {
   <div class="rounded-lg border p-4">
-    <div class="font-medium">{{ a.apellido }}, {{ a.nombre }}</div>
+    <div class="font-medium flex items-center justify-between">
+      <p>{{ a.apellido }}, {{ a.nombre }}</p>
+      <p-button
+        label="Agregar calificación"
+        icon="pi pi-plus"
+        size="small"
+        (onClick)="openCreateDialog(a)"
+      ></p-button>
+    </div>
     <div class="text-sm text-gray-600">{{ a.email }}</div>
     <div class="text-sm mt-2">
       Estado: {{ a.estado }} · Año: {{ a.anio ?? "-" }} · Período:
@@ -57,3 +66,87 @@
   }
 </div>
 } }
+
+<p-dialog
+  header="Agregar calificación"
+  [modal]="true"
+  [style]="{ width: '520px' }"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  (onHide)="closeDialog()"
+>
+  @if (selectedAlumno()) {
+  <div class="mb-3 text-sm text-gray-600">
+    Alumno:
+    <span class="font-medium"
+      >{{ selectedAlumno()!.apellido }}, {{ selectedAlumno()!.nombre }}</span
+    >
+    <div class="text-xs">{{ selectedAlumno()!.email }}</div>
+  </div>
+  }
+
+  <form [formGroup]="calificacionForm" class="space-y-3">
+    <div>
+      <label class="block mb-1">Tipo</label>
+      <p-dropdown
+        class="w-full"
+        [options]="tiposCalificacion"
+        optionLabel="label"
+        optionValue="value"
+        formControlName="tipo"
+      ></p-dropdown>
+    </div>
+
+    <div>
+      <label class="block mb-1">Nota</label>
+      <p-inputnumber
+        class="w-full"
+        formControlName="nota"
+        mode="decimal"
+        locale="es-AR"
+        [min]="0"
+        [max]="10"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="2"
+      ></p-inputnumber>
+    </div>
+
+    <div class="flex flex-col gap-2 w-full">
+      <label>Fecha</label>
+      <p-datepicker
+        appendTo="body"
+        styleClass="w-full"
+        formControlName="fecha"
+        [showIcon]="true"
+      />
+    </div>
+
+    <div>
+      <label class="block mb-1">Descripción (opcional)</label>
+      <textarea
+      pTextarea
+      formControlName="descripcion"
+      [fluid]="true"
+      [maxlength]="150"
+      ></textarea>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <p-button
+        label="Cancelar"
+        severity="secondary"
+        [disabled]="saving()"
+        (onClick)="closeDialog()"
+      ></p-button>
+
+      <p-button
+        label="Guardar"
+        icon="pi pi-check"
+        [disabled]="calificacionForm.invalid || saving()"
+        (onClick)="saveCalificacion()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -42,3 +42,26 @@ export interface Calificacion {
   descripcion: string | null;
   created_at: string;
 }
+
+export const TIPOS_CALIFICACION_OPTIONS: Array<{
+  label: string;
+  value: TipoCalificacion;
+}> = [
+  { label: 'Trabajo práctico', value: 'TRABAJO_PRACTICO' },
+  { label: 'Parcial', value: 'PARCIAL' },
+  { label: 'Final', value: 'FINAL' },
+  { label: 'Nota materia', value: 'NOTA_MATERIA' },
+];
+
+export interface CreateCalificacionBody {
+  alumno_id: number;
+  tipo: TipoCalificacion;
+  fecha: string;
+  nota: string;
+  descripcion?: string | null;
+}
+
+export interface CreateCalificacionResponse {
+  ok: boolean;
+  calificacion: Calificacion;
+}
