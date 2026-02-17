@@ -1,6 +1,11 @@
 import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { signal } from '@angular/core';
+
+export type SidebarMenuItem = {
+  label: string;
+  icon: string;
+  route: string;
+};
 
 @Component({
   selector: 'app-sidebar',
@@ -10,11 +15,7 @@ import { signal } from '@angular/core';
 export class SidebarComponent {
   open = input<boolean>(false);
 
-  menuItems = signal([
-    { label: 'Dashboard', icon: 'pi pi-home', route: '/superadmin/dashboard' },
-    { label: 'Instituciones', icon: 'pi pi-building', route: '/superadmin/instituciones' },
-    { label: 'Administradores', icon: 'pi pi-users', route: '/superadmin/admins' }
-  ]);
+  menuItems = input<SidebarMenuItem[]>([]);
 
   private router = inject(Router);
 
