@@ -6,6 +6,8 @@ import {
   CreateCalificacionResponse,
   DocenteInscriptosResponse,
   DocenteMisMateriasResponse,
+  UpdateCalificacionBody,
+  UpdateCalificacionResponse,
 } from '../types/docente.types';
 
 @Injectable({ providedIn: 'root' })
@@ -33,6 +35,16 @@ export class DocenteService {
   ): Observable<CreateCalificacionResponse> {
     return this.http.post<CreateCalificacionResponse>(
       `${this.baseUrl}/materias/${materiaId}/calificaciones`,
+      body
+    );
+  }
+
+  updateCalificacion(
+    calificacionId: number,
+    body: UpdateCalificacionBody
+  ): Observable<UpdateCalificacionResponse> {
+    return this.http.patch<UpdateCalificacionResponse>(
+      `${this.baseUrl}/calificaciones/${calificacionId}`,
       body
     );
   }

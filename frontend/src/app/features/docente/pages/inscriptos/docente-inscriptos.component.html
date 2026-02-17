@@ -43,9 +43,22 @@
       <div class="space-y-2">
         @for (c of a.calificaciones; track c.calificacion_id) {
         <div class="rounded-md bg-gray-50 p-3">
-          <div class="text-sm">
-            <span class="font-medium">{{ c.tipo }}</span>
-            · Nota: <span class="font-medium">{{ c.nota }}</span>
+          <div class="text-sm flex items-center justify-between">
+            <div>
+              <span class="font-medium">{{ c.tipo }}</span>
+              · Nota: <span class="font-medium">{{ c.nota }}</span>
+            </div>
+            <div>
+              <p-button
+                text
+                rounded
+                size="small"
+                icon="pi pi-pencil"
+                pTooltip="Editar calificación"
+                [disabled]="saving()"
+                (onClick)="openEditDialog(a, c)"
+              ></p-button>
+            </div>
           </div>
 
           <div class="text-sm text-gray-600">
@@ -68,9 +81,9 @@
 } }
 
 <p-dialog
-  header="Agregar calificación"
   [modal]="true"
   [style]="{ width: '520px' }"
+  [header]="isEditing() ? 'Editar calificación' : 'Agregar calificación'"
   [visible]="dialogVisible()"
   (visibleChange)="dialogVisible.set($event)"
   (onHide)="closeDialog()"
@@ -124,10 +137,10 @@
     <div>
       <label class="block mb-1">Descripción (opcional)</label>
       <textarea
-      pTextarea
-      formControlName="descripcion"
-      [fluid]="true"
-      [maxlength]="150"
+        pTextarea
+        formControlName="descripcion"
+        [fluid]="true"
+        [maxlength]="150"
       ></textarea>
     </div>
   </form>

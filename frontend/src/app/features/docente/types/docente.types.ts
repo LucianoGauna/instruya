@@ -65,3 +65,14 @@ export interface CreateCalificacionResponse {
   ok: boolean;
   calificacion: Calificacion;
 }
+
+export interface UpdateCalificacionBody {
+  tipo: TipoCalificacion;
+  fecha: string;
+  nota: string;
+  descripcion?: string | null;
+}
+
+export interface UpdateCalificacionResponse {
+  ok: boolean;
+}

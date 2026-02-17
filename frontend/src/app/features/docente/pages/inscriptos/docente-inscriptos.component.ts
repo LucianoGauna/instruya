@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { DocenteService } from '../../services/docente.service';
 import {
+  Calificacion,
   Inscripto,
   TipoCalificacion,
   TIPOS_CALIFICACION_OPTIONS,
@@ -71,6 +72,8 @@ export class DocenteInscriptosComponent {
     descripcion: [''],
   });
 
+  editingCalificacion = signal<Calificacion | null>(null);
+
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('materiaId');
     const id = Number(idParam);
@@ -89,6 +92,10 @@ export class DocenteInscriptosComponent {
     this.router.navigate(['/docente/mis-materias']);
   }
 
+  isEditing(): boolean {
+    return this.editingCalificacion() !== null;
+  }
+
   openCreateDialog(alumno: Inscripto) {
     this.selectedAlumno.set(alumno);
     this.calificacionForm.reset({
@@ -97,6 +104,20 @@ export class DocenteInscriptosComponent {
       fecha: new Date(),
       descripcion: '',
     });
+    this.dialogVisible.set(true);
+  }
+
+  openEditDialog(alumno: Inscripto, cal: Calificacion) {
+    this.selectedAlumno.set(alumno);
+    this.editingCalificacion.set(cal);
+
+    this.calificacionForm.reset({
+      tipo: cal.tipo,
+      nota: Number(cal.nota),
+      fecha: new Date(cal.fecha),
+      descripcion: cal.descripcion ?? '',
+    });
+
     this.dialogVisible.set(true);
   }
 
@@ -109,11 +130,13 @@ export class DocenteInscriptosComponent {
     });
     this.dialogVisible.set(false);
     this.selectedAlumno.set(null);
+    this.editingCalificacion.set(null);
   }
 
   saveCalificacion() {
     const materiaId = this.materiaId();
     const alumno = this.selectedAlumno();
+    const editing = this.editingCalificacion();
 
     if (!materiaId || !alumno) return;
 
@@ -135,51 +158,58 @@ export class DocenteInscriptosComponent {
       return;
     }
 
-    const fechaISO = this.toDateOnlyISO(fecha);
+    const fechaISO = this.toDateOnlyISO(fecha as Date);
+
+    const body = {
+      tipo,
+      nota: String(nota),
+      fecha: fechaISO,
+      descripcion: descripcion?.trim() ? descripcion.trim() : null,
+    };
 
     this.saving.set(true);
 
-    this.service
-      .createCalificacion(materiaId, {
-        alumno_id: alumno.alumno_id,
-        tipo,
-        nota: String(nota),
-        fecha: fechaISO,
-        descripcion: descripcion?.trim() ? descripcion.trim() : null,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.saving.set(false);
+    const request$ = editing
+      ? this.service.updateCalificacion(editing.calificacion_id, body)
+      : this.service.createCalificacion(materiaId, {
+          alumno_id: alumno.alumno_id,
+          ...body,
+        });
 
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Calificación creada',
-            detail: `Se agregó a ${alumno.apellido}, ${alumno.nombre}`,
-            life: 3000,
-          });
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.saving.set(false);
 
-          this.closeDialog();
-          this.load();
-        },
-        error: (err) => {
-          this.saving.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: editing ? 'Calificación actualizada' : 'Calificación creada',
+          detail: editing
+            ? `Se actualizó la calificación de ${alumno.apellido}, ${alumno.nombre}`
+            : `Se agregó a ${alumno.apellido}, ${alumno.nombre}`,
+          life: 3000,
+        });
 
-          const msg =
-            err?.status === 400
-              ? 'Datos inválidos (revisá tipo/nota/fecha)'
-              : err?.status === 404
-              ? 'Materia no encontrada'
-              : 'No se pudo crear la calificación';
+        this.closeDialog();
+        this.load();
+      },
+      error: (err) => {
+        this.saving.set(false);
 
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: msg,
-            life: 3500,
-          });
-        },
-      });
+        const msg =
+          err?.status === 400
+            ? 'Datos inválidos (revisá tipo/nota/fecha)'
+            : err?.status === 404
+            ? 'No encontrado'
+            : 'No se pudo guardar la calificación';
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: msg,
+          life: 3500,
+        });
+      },
+    });
   }
 
   private load() {
