@@ -10,7 +10,10 @@ import {
   getCarreraById,
   getCarreras,
   getDocentes,
+  getInscriptosPendientes,
   getMateriasDeCarrera,
+  patchAceptarInscripcion,
+  patchRechazarInscripcion,
   updateCarrera,
   updateMateria,
 } from './admin.controller';
@@ -101,6 +104,27 @@ router.get(
   authMiddleware,
   requireRole([Roles.ADMIN]),
   getCarreraById
+);
+
+router.get(
+  '/inscripciones/pendientes',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  getInscriptosPendientes
+);
+
+router.patch(
+  '/inscripciones/:inscripcionId/aceptar',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  patchAceptarInscripcion
+);
+
+router.patch(
+  '/inscripciones/:inscripcionId/rechazar',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  patchRechazarInscripcion
 );
 
 export default router;

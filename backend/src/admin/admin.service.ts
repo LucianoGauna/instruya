@@ -1,5 +1,10 @@
 import { pool } from '../db';
-import { CreateMateriaResult, UpdateMateriaResult } from './admin.types';
+import {
+  CreateMateriaResult,
+  Periodo,
+  PERIODOS_VALIDOS,
+  UpdateMateriaResult,
+} from './admin.types';
 
 export async function findCarrerasByAdminUserId(adminUserId: number) {
   const query = `
@@ -337,4 +342,131 @@ export async function findCarreraByIdForAdmin(
   );
 
   return rows.length ? rows[0] : null;
+}
+
+function toDateOnlyISO(value: any): string {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+export async function findInscriptosPendientes() {
+  const [rows]: any[] = await pool.query(
+    `
+    SELECT
+      im.id AS inscripcion_id,
+      im.fecha AS fecha,
+      im.created_at AS created_at,
+
+      u.id AS alumno_id,
+      u.nombre AS alumno_nombre,
+      u.apellido AS alumno_apellido,
+      u.email AS alumno_email,
+
+      ap.legajo AS legajo,
+      ap.cohorte AS cohorte,
+
+      m.id AS materia_id,
+      m.nombre AS materia_nombre,
+
+      c.id AS carrera_id,
+      c.nombre AS carrera_nombre
+
+    FROM inscripcion_materia im
+    INNER JOIN usuario u ON u.id = im.alumno_id
+    LEFT JOIN alumno_perfil ap ON ap.usuario_id = u.id
+    INNER JOIN materia m ON m.id = im.materia_id
+    INNER JOIN carrera c ON c.id = m.carrera_id
+
+    WHERE im.estado = 'PENDIENTE'
+    ORDER BY im.created_at DESC;
+    `
+  );
+
+  return (rows ?? []).map((r: any) => ({
+    inscripcion_id: Number(r.inscripcion_id),
+
+    alumno_id: Number(r.alumno_id),
+    alumno_nombre: String(r.alumno_nombre),
+    alumno_apellido: String(r.alumno_apellido),
+    alumno_email: String(r.alumno_email),
+    legajo: r.legajo ?? null,
+    cohorte:
+      r.cohorte === null || r.cohorte === undefined ? null : Number(r.cohorte),
+
+    materia_id: Number(r.materia_id),
+    materia_nombre: String(r.materia_nombre),
+
+    carrera_id: Number(r.carrera_id),
+    carrera_nombre: String(r.carrera_nombre),
+
+    fecha: toDateOnlyISO(r.fecha),
+    created_at:
+      r.created_at instanceof Date
+        ? r.created_at.toISOString()
+        : String(r.created_at),
+  }));
+}
+
+export async function aceptarInscripcion(params: {
+  inscripcionId: number;
+  anio: number;
+  periodo: Periodo;
+}) {
+  const { inscripcionId, anio, periodo } = params;
+
+  if (!Number.isFinite(anio) || anio < 2000 || anio > 2100)
+    return 'ANIO_INVALIDO';
+  if (!PERIODOS_VALIDOS.has(periodo)) return 'PERIODO_INVALIDO';
+
+  const [rows]: any[] = await pool.query(
+    `SELECT id, estado FROM inscripcion_materia WHERE id = ? LIMIT 1;`,
+    [inscripcionId]
+  );
+
+  if (!rows || rows.length === 0) return 'NOT_FOUND';
+  if (rows[0].estado !== 'PENDIENTE') return 'NOT_PENDIENTE';
+
+  await pool.query(
+    `
+    UPDATE inscripcion_materia
+    SET estado = 'ACEPTADA',
+        anio = ?,
+        periodo = ?,
+        fecha = CURDATE()
+    WHERE id = ?;
+    `,
+    [anio, periodo, inscripcionId]
+  );
+
+  return 'OK';
+}
+
+export async function rechazarInscripcion(params: { inscripcionId: number }) {
+  const { inscripcionId } = params;
+
+  const [rows]: any[] = await pool.query(
+    `SELECT id, estado FROM inscripcion_materia WHERE id = ? LIMIT 1;`,
+    [inscripcionId]
+  );
+
+  if (!rows || rows.length === 0) return 'NOT_FOUND';
+  if (rows[0].estado !== 'PENDIENTE') return 'NOT_PENDIENTE';
+
+  await pool.query(
+    `
+    UPDATE inscripcion_materia
+    SET estado = 'RECHAZADA',
+        anio = NULL,
+        periodo = NULL,
+        fecha = CURDATE()
+    WHERE id = ?;
+    `,
+    [inscripcionId]
+  );
+
+  return 'OK';
 }

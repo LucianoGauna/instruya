@@ -11,7 +11,11 @@ import {
   setMateriaActivaForAdmin,
   updateMateriaForAdmin,
   findCarreraByIdForAdmin,
+  findInscriptosPendientes,
+  aceptarInscripcion,
+  rechazarInscripcion,
 } from './admin.service';
+import { PERIODOS_VALIDOS } from './admin.types';
 
 export async function getCarreras(req: Request, res: Response) {
   try {
@@ -390,6 +394,94 @@ export async function getCarreraById(req: Request, res: Response) {
     return res.json({ ok: true, carrera });
   } catch (error) {
     console.error('Error en getCarreraById:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function getInscriptosPendientes(req: Request, res: Response) {
+  try {
+    const pendientes = await findInscriptosPendientes();
+    return res.json({ ok: true, pendientes });
+  } catch (error) {
+    console.error('Error en getInscriptosPendientes:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function patchAceptarInscripcion(req: Request, res: Response) {
+  const inscripcionId = Number(req.params.inscripcionId);
+  if (!Number.isFinite(inscripcionId)) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'inscripcionId inválido' });
+  }
+
+  const { anio, periodo } = req.body;
+
+  const anioNum = Number(anio);
+  if (!Number.isFinite(anioNum)) {
+    return res.status(400).json({ ok: false, message: 'anio inválido' });
+  }
+  if (typeof periodo !== 'string' || !PERIODOS_VALIDOS.has(periodo as any)) {
+    return res.status(400).json({ ok: false, message: 'periodo inválido' });
+  }
+
+  try {
+    const result = await aceptarInscripcion({
+      inscripcionId,
+      anio: anioNum,
+      periodo: periodo as any,
+    });
+
+    if (result === 'ANIO_INVALIDO')
+      return res.status(400).json({ ok: false, message: 'anio inválido' });
+    if (result === 'PERIODO_INVALIDO')
+      return res.status(400).json({ ok: false, message: 'periodo inválido' });
+    if (result === 'NOT_FOUND')
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Inscripción no encontrada' });
+    if (result === 'NOT_PENDIENTE')
+      return res
+        .status(409)
+        .json({ ok: false, message: 'La inscripción no está pendiente' });
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error en patchAceptarInscripcion:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function patchRechazarInscripcion(req: Request, res: Response) {
+  const inscripcionId = Number(req.params.inscripcionId);
+  if (!Number.isFinite(inscripcionId)) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'inscripcionId inválido' });
+  }
+
+  try {
+    const result = await rechazarInscripcion({ inscripcionId });
+
+    if (result === 'NOT_FOUND')
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Inscripción no encontrada' });
+    if (result === 'NOT_PENDIENTE')
+      return res
+        .status(409)
+        .json({ ok: false, message: 'La inscripción no está pendiente' });
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error en patchRechazarInscripcion:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });
