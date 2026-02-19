@@ -16,6 +16,11 @@ export class AdminLayoutComponent {
   menuItems = signal<SidebarMenuItem[]>([
     { label: 'Dashboard', icon: 'pi pi-home', route: '/admin/dashboard' },
     { label: 'Carreras', icon: 'pi pi-book', route: '/admin/carreras' },
+    {
+      label: 'Inscripciones',
+      icon: 'pi pi-inbox',
+      route: '/admin/inscripciones-pendientes',
+    },
   ]);
 
   toggleSidebar() {
