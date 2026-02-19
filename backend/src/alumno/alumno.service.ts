@@ -17,6 +17,7 @@ export async function findMisMaterias(alumnoId: number) {
     INNER JOIN materia m ON m.id = im.materia_id
     INNER JOIN carrera c ON c.id = m.carrera_id
     WHERE im.alumno_id = ?
+      AND im.estado IN ('ACEPTADA', 'PENDIENTE')
     ORDER BY c.nombre, m.nombre;
   `;
 
@@ -52,7 +53,7 @@ export async function findMisCalificaciones(alumnoId: number) {
 }
 
 async function getCarreraDelAlumno(
-  alumnoId: number
+  alumnoId: number,
 ): Promise<{ id: number; nombre: string } | null> {
   const [rows]: any[] = await pool.query(
     `
@@ -62,7 +63,7 @@ async function getCarreraDelAlumno(
     WHERE ap.usuario_id = ?
     LIMIT 1;
     `,
-    [alumnoId]
+    [alumnoId],
   );
 
   if (!rows || rows.length === 0) return null;
@@ -70,7 +71,7 @@ async function getCarreraDelAlumno(
 }
 
 export async function findCatalogoMaterias(
-  alumnoId: number
+  alumnoId: number,
 ): Promise<GetCatalogoResult> {
   const carrera = await getCarreraDelAlumno(alumnoId);
   if (!carrera) return 'ALUMNO_SIN_CARRERA';
@@ -94,7 +95,7 @@ export async function findCatalogoMaterias(
       AND m.activa = 1
     ORDER BY m.nombre;
     `,
-    [alumnoId, carrera.id]
+    [alumnoId, carrera.id],
   );
 
   const materias = (rows ?? []).map((r: any) => ({
@@ -133,7 +134,7 @@ export async function solicitarInscripcion(params: {
       AND activa = 1
     LIMIT 1;
     `,
-    [materiaId, carrera.id]
+    [materiaId, carrera.id],
   );
 
   if (!matRows || matRows.length === 0) return 'MATERIA_NOT_FOUND';
@@ -147,7 +148,7 @@ export async function solicitarInscripcion(params: {
       AND materia_id = ?
     LIMIT 1;
     `,
-    [alumnoId, materiaId]
+    [alumnoId, materiaId],
   );
 
   if (insRows && insRows.length > 0) {
@@ -168,7 +169,7 @@ export async function solicitarInscripcion(params: {
           periodo = NULL
       WHERE id = ?;
       `,
-      [existing.id]
+      [existing.id],
     );
 
     return { inscripcion_id: Number(existing.id), estado: 'PENDIENTE' };
@@ -180,7 +181,7 @@ export async function solicitarInscripcion(params: {
     INSERT INTO inscripcion_materia (alumno_id, materia_id, estado, fecha, anio, periodo)
     VALUES (?, ?, 'PENDIENTE', CURDATE(), NULL, NULL);
     `,
-    [alumnoId, materiaId]
+    [alumnoId, materiaId],
   );
 
   return { inscripcion_id: Number(result.insertId), estado: 'PENDIENTE' };
