@@ -20,8 +20,19 @@
   @if (materias().length === 0) {
     <p>No hay materias activas disponibles en tu carrera.</p>
   } @else {
+    <div class="mb-4">
+      <p-selectbutton
+        optionLabel="label"
+        optionValue="value"
+        ariaLabel="Filtro de estado"
+        [allowEmpty]="false"
+        [options]="stateOptions"
+        [(ngModel)]="selectedFilter"
+      ></p-selectbutton>
+    </div>
+
     <div class="space-y-3">
-      @for (m of materias(); track m.materia_id) {
+      @for (m of materiasFiltradas(); track m.materia_id) {
         <div
           class="rounded-lg border p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
@@ -50,5 +61,11 @@
         </div>
       }
     </div>
+
+    @if (materiasFiltradas().length === 0) {
+      <p class="mt-4 text-gray-600">
+        No hay materias para el filtro seleccionado.
+      </p>
+    }
   }
 }

@@ -11,13 +11,21 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { FormsModule } from '@angular/forms';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { AlumnoService } from '../../services/alumno.service';
-import { CatalogoCarrera, CatalogoMateria } from '../../types/alumno.types';
+import { CatalogoCarrera, CatalogoMateria, EstadoFiltro } from '../../types/alumno.types';
 
 @Component({
   selector: 'app-alumno-catalogo-materias',
   standalone: true,
-  imports: [CommonModule, ButtonModule, ToastModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    SelectButtonModule,
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './alumno-catalogo-materias.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +42,15 @@ export class AlumnoCatalogoMateriasComponent {
   materias = signal<CatalogoMateria[]>([]);
 
   requestingMateriaId = signal<number | null>(null);
+
+  stateOptions: Array<{ label: string; value: EstadoFiltro }> = [
+    { label: 'Todas', value: 'TODAS' },
+    { label: 'Sin inscripción', value: 'SIN_INSCRIPCION' },
+    { label: 'Pendientes', value: 'PENDIENTE' },
+    { label: 'Aceptadas', value: 'ACEPTADA' },
+    { label: 'Rechazadas', value: 'RECHAZADA' },
+  ];
+  selectedFilter: EstadoFiltro = 'TODAS';
 
   ngOnInit() {
     this.loadCatalogo();
@@ -52,8 +69,19 @@ export class AlumnoCatalogoMateriasComponent {
   }
 
   estadoLabel(materia: CatalogoMateria): string {
-    if (!materia.inscripcion) return 'Sin inscripción';
-    return materia.inscripcion.estado;
+    const estado = this.estadoKey(materia);
+    switch (estado) {
+      case 'PENDIENTE':
+        return 'Pendiente';
+      case 'ACEPTADA':
+        return 'Aceptada';
+      case 'RECHAZADA':
+        return 'Rechazada';
+      case 'BAJA':
+        return 'Baja';
+      default:
+        return 'Sin inscripción';
+    }
   }
 
   solicitarInscripcion(materia: CatalogoMateria) {
@@ -130,5 +158,15 @@ export class AlumnoCatalogoMateriasComponent {
           this.loading.set(false);
         },
       });
+  }
+
+  materiasFiltradas(): CatalogoMateria[] {
+    const all = this.materias();
+    if (this.selectedFilter === 'TODAS') return all;
+    return all.filter((m) => this.estadoKey(m) === this.selectedFilter);
+  }
+
+  private estadoKey(materia: CatalogoMateria): EstadoFiltro {
+    return materia.inscripcion?.estado ?? 'SIN_INSCRIPCION';
   }
 }

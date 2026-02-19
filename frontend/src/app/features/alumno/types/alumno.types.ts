@@ -31,3 +31,11 @@ export interface CatalogoCarrera {
   id: number;
   nombre: string;
 }
+
+export type EstadoFiltro =
+  | 'TODAS'
+  | 'SIN_INSCRIPCION'
+  | 'PENDIENTE'
+  | 'ACEPTADA'
+  | 'RECHAZADA'
+  | 'BAJA';
