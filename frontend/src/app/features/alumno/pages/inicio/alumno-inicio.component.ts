@@ -16,6 +16,10 @@ export class AlumnoInicioComponent {
     this.router.navigate(['/alumno/mis-materias']);
   }
 
+  goToCatalogo() {
+    this.router.navigate(['/alumno/catalogo']);
+  }
+
   goToMisCalificaciones() {
     this.router.navigate(['/alumno/mis-calificaciones']);
   }

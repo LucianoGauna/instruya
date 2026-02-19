@@ -16,6 +16,11 @@ export class AlumnoLayoutComponent {
   menuItems = signal<SidebarMenuItem[]>([
     { label: 'Inicio', icon: 'pi pi-home', route: '/alumno/inicio' },
     {
+      label: 'Catalogo',
+      icon: 'pi pi-list',
+      route: '/alumno/catalogo',
+    },
+    {
       label: 'Mis materias',
       icon: 'pi pi-book',
       route: '/alumno/mis-materias',
