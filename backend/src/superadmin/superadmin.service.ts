@@ -94,19 +94,34 @@ export async function updateInstitucion(params: {
 
   // Exist check
   const [exists]: any[] = await pool.query(
-    `SELECT id FROM institucion WHERE id = ? LIMIT 1;`,
+    `SELECT id, direccion FROM institucion WHERE id = ? LIMIT 1;`,
     [id],
   );
   if (!exists || exists.length === 0) return null;
+  const direccionActual = exists[0].direccion ?? null;
 
-  await pool.query(
-    `UPDATE institucion
-     SET nombre = ?, email = ?, direccion = ?
-     WHERE id = ?;`,
-    [nombre, email, direccion ?? null, id],
-  );
+  if (direccion === undefined) {
+    await pool.query(
+      `UPDATE institucion
+       SET nombre = ?, email = ?
+       WHERE id = ?;`,
+      [nombre, email, id],
+    );
+  } else {
+    await pool.query(
+      `UPDATE institucion
+       SET nombre = ?, email = ?, direccion = ?
+       WHERE id = ?;`,
+      [nombre, email, direccion, id],
+    );
+  }
 
-  return { id, nombre, email, direccion: direccion ?? null };
+  return {
+    id,
+    nombre,
+    email,
+    direccion: direccion === undefined ? direccionActual : direccion,
+  };
 }
 
 export async function setInstitucionActiva(id: number, activa: 0 | 1) {

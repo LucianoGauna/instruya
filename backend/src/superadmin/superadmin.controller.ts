@@ -97,8 +97,15 @@ export async function patchInstitucion(req: Request, res: Response) {
     typeof req.body?.nombre === 'string' ? req.body.nombre.trim() : '';
   const email =
     typeof req.body?.email === 'string' ? req.body.email.trim() : '';
-  const direccion =
-    typeof req.body?.direccion === 'string' ? req.body.direccion.trim() : null;
+  const hasDireccion = Object.prototype.hasOwnProperty.call(
+    req.body ?? {},
+    'direccion'
+  );
+  const direccion = hasDireccion
+    ? typeof req.body?.direccion === 'string'
+      ? req.body.direccion.trim()
+      : null
+    : undefined;
 
   if (!nombre || !email)
     return res
