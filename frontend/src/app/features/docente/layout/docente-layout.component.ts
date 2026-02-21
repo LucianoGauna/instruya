@@ -11,7 +11,7 @@ import { SidebarMenuItem } from '../../../shared/types/sidebar.types';
   templateUrl: './docente-layout.component.html',
 })
 export class DocenteLayoutComponent {
-  sidebarOpen = signal(true);
+  sidebarOpen = signal(false);
 
   menuItems = signal<SidebarMenuItem[]>([
     { label: 'Inicio', icon: 'pi pi-home', route: '/docente/inicio' },

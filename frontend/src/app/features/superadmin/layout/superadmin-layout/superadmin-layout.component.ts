@@ -10,7 +10,7 @@ import { SidebarMenuItem } from '../../../../shared/types/sidebar.types';
   templateUrl: './superadmin-layout.component.html',
 })
 export class SuperadminLayoutComponent {
-  sidebarOpen = signal(true);
+  sidebarOpen = signal(false);
 
   menuItems: SidebarMenuItem[] = [
     { label: 'Dashboard', icon: 'pi pi-home', route: '/superadmin/dashboard' },

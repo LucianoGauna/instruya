@@ -11,7 +11,7 @@ import { SidebarMenuItem } from '../../../shared/types/sidebar.types';
   templateUrl: './admin-layout.component.html',
 })
 export class AdminLayoutComponent {
-  sidebarOpen = signal(true);
+  sidebarOpen = signal(false);
 
   menuItems = signal<SidebarMenuItem[]>([
     { label: 'Dashboard', icon: 'pi pi-home', route: '/admin/dashboard' },

@@ -11,7 +11,7 @@ import { SidebarMenuItem } from '../../../shared/types/sidebar.types';
   templateUrl: './alumno-layout.component.html',
 })
 export class AlumnoLayoutComponent {
-  sidebarOpen = signal(true);
+  sidebarOpen = signal(false);
 
   menuItems = signal<SidebarMenuItem[]>([
     { label: 'Inicio', icon: 'pi pi-home', route: '/alumno/inicio' },
