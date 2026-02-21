@@ -58,11 +58,11 @@
               text
               raised
               size="small"
-              [severity]="puedeSolicitar(m) ? 'info' : 'secondary'"
               icon="pi pi-send"
               tooltipPosition="left"
               positionLeft="-5"
-              pTooltip="Solicitar inscripción"
+              [pTooltip]="puedeSolicitar(m) ? 'Solicitar inscripción' : ''"
+              [severity]="puedeSolicitar(m) ? 'info' : 'secondary'"
               [disabled]="
                 !puedeSolicitar(m) || requestingMateriaId() === m.materia_id
               "

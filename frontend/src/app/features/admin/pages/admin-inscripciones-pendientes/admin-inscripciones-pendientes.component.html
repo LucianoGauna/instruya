@@ -93,11 +93,12 @@
     <div class="flex flex-col gap-2">
       <label class="text-sm font-medium">Período</label>
       <p-dropdown
+      appendTo="body"
         formControlName="periodo"
-        [options]="periodosOptions"
         optionLabel="label"
         optionValue="value"
         placeholder="Seleccionar período"
+        [options]="periodosOptions"
       ></p-dropdown>
       @if (acceptForm.controls.periodo.touched &&
       acceptForm.controls.periodo.invalid) {
