@@ -1,71 +1,83 @@
 <p-toast></p-toast>
+<div class="flex flex-col gap-5 font-sans">
+  <div class="w-full flex items-center justify-between">
+    <p-button
+      text
+      rounded
+      severity="secondary"
+      icon="pi pi-arrow-left"
+      styleClass="!w-5 hover:!bg-transparent !border-none"
+      (onClick)="goBack()"
+    ></p-button>
 
-<p-button
-  label="Volver"
-  icon="pi pi-arrow-left"
-  class="mb-4"
-  (onClick)="goBack()"
-></p-button>
+    <h1 class="text-2xl sm:text-4xl font-semibold font-lato">Catálogo de materias</h1>
+  </div>
+  @if (carrera()) {
+    <p class="text-gray-600">Carrera: {{ carrera()!.nombre }}</p>
+  }
 
-<h1 class="text-2xl font-semibold mb-1">Catálogo de materias</h1>
-@if (carrera()) {
-  <p class="mb-4 text-gray-600">Carrera: {{ carrera()!.nombre }}</p>
-}
-
-@if (loading()) {
-  <p>Cargando...</p>
-} @else if (error()) {
-  <p class="text-red-600">{{ error() }}</p>
-} @else {
-  @if (materias().length === 0) {
-    <p>No hay materias activas disponibles en tu carrera.</p>
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
   } @else {
-    <div class="mb-4">
-      <p-selectbutton
-        optionLabel="label"
-        optionValue="value"
-        ariaLabel="Filtro de estado"
-        [allowEmpty]="false"
-        [options]="stateOptions"
-        [(ngModel)]="selectedFilter"
-      ></p-selectbutton>
-    </div>
+    @if (materias().length === 0) {
+      <p>No hay materias activas disponibles en tu carrera.</p>
+    } @else {
+      <div>
+        <p-selectbutton
+          optionLabel="label"
+          optionValue="value"
+          ariaLabel="Filtro de estado"
+          styleClass="!text-sm"
+          [allowEmpty]="false"
+          [options]="stateOptions"
+          [(ngModel)]="selectedFilter"
+        ></p-selectbutton>
+      </div>
 
-    <div class="space-y-3">
-      @for (m of materiasFiltradas(); track m.materia_id) {
-        <div
-          class="rounded-lg border p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <div class="space-y-1">
-            <div class="font-medium">{{ m.materia_nombre }}</div>
-            <div class="text-sm text-gray-600">
-              Estado: {{ estadoLabel(m) }}
-            </div>
-            @if (m.inscripcion?.anio || m.inscripcion?.periodo) {
+      <div class="flex flex-col gap-3">
+        @for (m of materiasFiltradas(); track m.materia_id) {
+          <div
+            class="rounded-lg border p-4 flex gap-3 flex-row items-center justify-between"
+          >
+            <div class="space-y-1">
+              <div class="font-medium">{{ m.materia_nombre }}</div>
               <div class="text-sm text-gray-600">
-                Año: {{ m.inscripcion?.anio ?? "-" }} · Período:
-                {{ m.inscripcion?.periodo ?? "-" }}
+                Estado: {{ estadoLabel(m) }}
               </div>
-            }
+              @if (m.inscripcion?.anio || m.inscripcion?.periodo) {
+                <div class="text-sm text-gray-600">
+                  Año: {{ m.inscripcion?.anio ?? "-" }} · Período:
+                  {{ m.inscripcion?.periodo ?? "-" }}
+                </div>
+              }
+            </div>
+
+            <p-button
+              text
+              raised
+              size="small"
+              [severity]="puedeSolicitar(m) ? 'info' : 'secondary'"
+              icon="pi pi-send"
+              tooltipPosition="left"
+              positionLeft="-5"
+              pTooltip="Solicitar inscripción"
+              [disabled]="
+                !puedeSolicitar(m) || requestingMateriaId() === m.materia_id
+              "
+              [loading]="requestingMateriaId() === m.materia_id"
+              (onClick)="solicitarInscripcion(m)"
+            ></p-button>
           </div>
+        }
+      </div>
 
-          <p-button
-            label="Solicitar inscripción"
-            icon="pi pi-send"
-            [disabled]="
-              !puedeSolicitar(m) || requestingMateriaId() === m.materia_id
-            "
-            [loading]="requestingMateriaId() === m.materia_id"
-            (onClick)="solicitarInscripcion(m)"
-          ></p-button>
-        </div>
+      @if (materiasFiltradas().length === 0) {
+        <p class="text-gray-600">
+          No hay materias para el filtro seleccionado.
+        </p>
       }
-    </div>
-
-    @if (materiasFiltradas().length === 0) {
-      <p class="mt-4 text-gray-600">
-        No hay materias para el filtro seleccionado.
-      </p>
     }
   }
-}
+</div>

@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { AlumnoService } from '../../services/alumno.service';
 import { CatalogoCarrera, CatalogoMateria, EstadoFiltro } from '../../types/alumno.types';
+import { Tooltip } from "primeng/tooltip";
 
 @Component({
   selector: 'app-alumno-catalogo-materias',
@@ -25,7 +26,8 @@ import { CatalogoCarrera, CatalogoMateria, EstadoFiltro } from '../../types/alum
     ButtonModule,
     SelectButtonModule,
     ToastModule,
-  ],
+    Tooltip
+],
   providers: [MessageService],
   templateUrl: './alumno-catalogo-materias.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
