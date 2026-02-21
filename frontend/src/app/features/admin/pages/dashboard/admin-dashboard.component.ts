@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   standalone: true,
   selector: 'app-admin-dashboard',
-  template: `<h1>Dashboard Admin</h1>`
+  templateUrl: './admin-dashboard.component.html',
+  imports: [ButtonModule, RouterLink],
 })
 export class AdminDashboardComponent {}
