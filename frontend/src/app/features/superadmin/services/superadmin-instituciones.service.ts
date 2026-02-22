@@ -1,0 +1,75 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Institucion {
+  id: number;
+  nombre: string;
+  email: string;
+  direccion: string | null;
+  activa: 0 | 1;
+  created_at: string;
+}
+
+interface InstitucionesResponse {
+  ok: boolean;
+  instituciones: Institucion[];
+}
+
+interface CrearInstitucionResponse {
+  ok: boolean;
+  institucion: {
+    id: number;
+    nombre: string;
+    email: string;
+    direccion: string | null;
+    activa: 0 | 1;
+  };
+  admin: {
+    id: number;
+    email: string;
+  };
+}
+
+@Injectable({ providedIn: 'root' })
+export class SuperadminInstitucionesService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3000/superadmin/instituciones';
+
+  getInstituciones(): Observable<InstitucionesResponse> {
+    return this.http.get<InstitucionesResponse>(this.apiUrl);
+  }
+
+  createInstitucion(payload: {
+    institucion: { nombre: string; email: string; direccion: string };
+    admin: {
+      nombre: string;
+      apellido: string;
+      email: string;
+      contrasenia: string;
+    };
+  }): Observable<CrearInstitucionResponse> {
+    return this.http.post<CrearInstitucionResponse>(this.apiUrl, payload);
+  }
+
+  updateInstitucion(
+    id: number,
+    payload: { nombre: string; email: string; direccion: string },
+  ) {
+    return this.http.patch<{ ok: boolean; institucion: Institucion }>(
+      `${this.apiUrl}/${id}`,
+      payload,
+    );
+  }
+
+  activarInstitucion(id: number) {
+    return this.http.patch<{ ok: boolean }>(`${this.apiUrl}/${id}/activar`, {});
+  }
+
+  desactivarInstitucion(id: number) {
+    return this.http.patch<{ ok: boolean }>(
+      `${this.apiUrl}/${id}/desactivar`,
+      {},
+    );
+  }
+}
