@@ -295,11 +295,47 @@
     } @else {
       <div class="space-y-2 max-h-96 overflow-auto pr-1">
         @for (a of admins(); track a.id) {
-          <div class="rounded-lg border p-3">
-            <div class="font-medium">{{ a.apellido }}, {{ a.nombre }}</div>
-            <div class="text-sm text-gray-600">{{ a.email }}</div>
-            <div class="text-sm text-gray-600">
-              Estado: {{ a.activo === 1 ? "Activo" : "Inactivo" }}
+          <div
+            class="rounded-lg border p-3 flex items-center justify-between gap-3"
+          >
+            <div>
+              <div class="font-medium">{{ a.apellido }}, {{ a.nombre }}</div>
+              <div class="text-sm text-gray-600">{{ a.email }}</div>
+              <div class="text-sm text-gray-600">
+                Estado: {{ a.activo === 1 ? "Activo" : "Inactivo" }}
+              </div>
+            </div>
+
+            <div>
+              @if (a.activo === 1) {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-eye-slash"
+                  severity="danger"
+                  tooltipPosition="top"
+                  positionTop="-5"
+                  pTooltip="Desactivar"
+                  [loading]="updatingAdminId() === a.id"
+                  [disabled]="updatingAdminId() === a.id"
+                  (onClick)="toggleAdminActivo(a)"
+                ></p-button>
+              } @else {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-eye"
+                  severity="success"
+                  tooltipPosition="top"
+                  positionTop="-5"
+                  pTooltip="Activar"
+                  [loading]="updatingAdminId() === a.id"
+                  [disabled]="updatingAdminId() === a.id"
+                  (onClick)="toggleAdminActivo(a)"
+                ></p-button>
+              }
             </div>
           </div>
         }

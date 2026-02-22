@@ -68,6 +68,7 @@ export interface GetAdminsByInstitucionResponse {
 @Injectable({ providedIn: 'root' })
 export class SuperadminInstitucionesService {
   private http = inject(HttpClient);
+  private superadminBaseUrl = 'http://localhost:3000/superadmin';
   private apiUrl = 'http://localhost:3000/superadmin/instituciones';
 
   getInstituciones(): Observable<InstitucionesResponse> {
@@ -120,6 +121,20 @@ export class SuperadminInstitucionesService {
   getAdminsByInstitucion(id: number) {
     return this.http.get<GetAdminsByInstitucionResponse>(
       `${this.apiUrl}/${id}/admins`,
+    );
+  }
+
+  activarAdmin(adminId: number) {
+    return this.http.patch<{ ok: boolean }>(
+      `${this.superadminBaseUrl}/admins/${adminId}/activar`,
+      {},
+    );
+  }
+
+  desactivarAdmin(adminId: number) {
+    return this.http.patch<{ ok: boolean }>(
+      `${this.superadminBaseUrl}/admins/${adminId}/desactivar`,
+      {},
     );
   }
 }

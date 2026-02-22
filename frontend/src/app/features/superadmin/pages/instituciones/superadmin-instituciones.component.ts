@@ -18,6 +18,7 @@ import {
   Institucion,
   SuperadminInstitucionesService,
 } from '../../services/superadmin-instituciones.service';
+import { Tooltip } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-superadmin-instituciones',
@@ -29,6 +30,7 @@ import {
     DialogModule,
     InputTextModule,
     ToastModule,
+    Tooltip,
   ],
   providers: [MessageService],
   templateUrl: './superadmin-instituciones.component.html',
@@ -72,6 +74,7 @@ export class SuperadminInstitucionesComponent {
   loadingAdmins = signal(false);
   adminsError = signal<string | null>(null);
   admins = signal<AdminDeInstitucion[]>([]);
+  updatingAdminId = signal<number | null>(null);
 
   ngOnInit() {
     this.loadInstituciones();
@@ -362,11 +365,12 @@ export class SuperadminInstitucionesComponent {
           this.creatingAdmin.set(false);
           const detail =
             err?.status === 409
-              ? err?.error?.message ?? 'Email duplicado o institución inactiva'
+              ? (err?.error?.message ??
+                'Email duplicado o institución inactiva')
               : err?.status === 404
                 ? 'Institución no encontrada'
                 : err?.status === 400
-                  ? err?.error?.message ?? 'Datos inválidos'
+                  ? (err?.error?.message ?? 'Datos inválidos')
                   : 'No se pudo crear el administrador';
           this.messageService.add({
             severity: 'error',
@@ -381,23 +385,7 @@ export class SuperadminInstitucionesComponent {
   openViewAdminsDialog(i: Institucion) {
     this.viewAdminsTargetInstitucion.set(i);
     this.viewAdminsDialogVisible.set(true);
-    this.loadingAdmins.set(true);
-    this.adminsError.set(null);
-    this.admins.set([]);
-
-    this.service
-      .getAdminsByInstitucion(i.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.admins.set(res.admins);
-          this.loadingAdmins.set(false);
-        },
-        error: () => {
-          this.adminsError.set('No se pudieron cargar los administradores');
-          this.loadingAdmins.set(false);
-        },
-      });
+    this.loadAdminsByInstitucion(i.id);
   }
 
   closeViewAdminsDialog() {
@@ -406,6 +394,47 @@ export class SuperadminInstitucionesComponent {
     this.loadingAdmins.set(false);
     this.adminsError.set(null);
     this.admins.set([]);
+    this.updatingAdminId.set(null);
+  }
+
+  toggleAdminActivo(admin: AdminDeInstitucion) {
+    const institucion = this.viewAdminsTargetInstitucion();
+    if (!institucion) return;
+
+    this.updatingAdminId.set(admin.id);
+
+    const request$ =
+      admin.activo === 1
+        ? this.service.desactivarAdmin(admin.id)
+        : this.service.activarAdmin(admin.id);
+
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.updatingAdminId.set(null);
+        this.messageService.add({
+          severity: 'success',
+          summary: admin.activo === 1 ? 'Admin desactivado' : 'Admin activado',
+          detail: `${admin.apellido}, ${admin.nombre}`,
+          life: 3000,
+        });
+        this.loadAdminsByInstitucion(institucion.id);
+      },
+      error: (err) => {
+        this.updatingAdminId.set(null);
+        const detail =
+          err?.status === 404
+            ? 'Administrador no encontrado'
+            : err?.status === 400
+              ? 'adminId inválido'
+              : 'No se pudo actualizar el estado del admin';
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail,
+          life: 3500,
+        });
+      },
+    });
   }
 
   private loadInstituciones() {
@@ -423,6 +452,26 @@ export class SuperadminInstitucionesComponent {
         error: () => {
           this.error.set('No se pudieron cargar las instituciones');
           this.loading.set(false);
+        },
+      });
+  }
+
+  private loadAdminsByInstitucion(institucionId: number) {
+    this.loadingAdmins.set(true);
+    this.adminsError.set(null);
+    this.admins.set([]);
+
+    this.service
+      .getAdminsByInstitucion(institucionId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.admins.set(res.admins);
+          this.loadingAdmins.set(false);
+        },
+        error: () => {
+          this.adminsError.set('No se pudieron cargar los administradores');
+          this.loadingAdmins.set(false);
         },
       });
   }
