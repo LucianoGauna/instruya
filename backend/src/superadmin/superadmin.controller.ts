@@ -56,10 +56,12 @@ export async function postCrearInstitucionConAdmin(
     });
 
     if (result === 'INSTITUCION_EMAIL_DUP') {
-      return res.status(409).json({
-        ok: false,
-        message: 'Ya existe una institución con ese email',
-      });
+      return res
+        .status(409)
+        .json({
+          ok: false,
+          message: 'Ya existe una institución con ese email',
+        });
     }
     if (result === 'ADMIN_EMAIL_DUP') {
       return res
@@ -170,7 +172,10 @@ export async function patchDesactivarInstitucion(req: Request, res: Response) {
   }
 }
 
-export async function postCrearAdminEnInstitucion(req: Request, res: Response) {
+export async function postCrearAdminEnInstitucion(
+  req: Request,
+  res: Response
+) {
   const institucionId = Number(req.params.id);
   if (!Number.isFinite(institucionId)) {
     return res.status(400).json({ ok: false, message: 'id inválido' });
@@ -186,6 +191,13 @@ export async function postCrearAdminEnInstitucion(req: Request, res: Response) {
     return res
       .status(400)
       .json({ ok: false, message: 'Faltan campos requeridos' });
+  }
+
+  if (contrasenia.length < 6) {
+    return res.status(400).json({
+      ok: false,
+      message: 'La contraseña debe tener al menos 6 caracteres',
+    });
   }
 
   try {
