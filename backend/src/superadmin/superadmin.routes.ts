@@ -8,6 +8,7 @@ import {
   patchInstitucion,
   patchActivarInstitucion,
   patchDesactivarInstitucion,
+  postCrearAdminEnInstitucion,
 } from './superadmin.controller';
 
 const router = Router();
@@ -16,35 +17,42 @@ router.get(
   '/instituciones',
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
-  getInstituciones
+  getInstituciones,
 );
 
 router.post(
   '/instituciones',
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
-  postCrearInstitucionConAdmin
+  postCrearInstitucionConAdmin,
 );
 
 router.patch(
   '/instituciones/:id',
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
-  patchInstitucion
+  patchInstitucion,
 );
 
 router.patch(
   '/instituciones/:id/activar',
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
-  patchActivarInstitucion
+  patchActivarInstitucion,
 );
 
 router.patch(
   '/instituciones/:id/desactivar',
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
-  patchDesactivarInstitucion
+  patchDesactivarInstitucion,
+);
+
+router.post(
+  '/instituciones/:id/admins',
+  authMiddleware,
+  requireRole([Roles.SUPERADMIN]),
+  postCrearAdminEnInstitucion,
 );
 
 export default router;

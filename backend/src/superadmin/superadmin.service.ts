@@ -1,6 +1,9 @@
 import { pool } from '../db';
 import bcrypt from 'bcrypt';
-import type { CreateInstitucionResult } from './superadmin.types';
+import type {
+  CreateAdminEnInstitucionResult,
+  CreateInstitucionResult,
+} from './superadmin.types';
 
 export async function createInstitucionConAdmin(params: {
   institucion: { nombre: string; email: string; direccion?: string | null };
@@ -136,4 +139,47 @@ export async function setInstitucionActiva(id: number, activa: 0 | 1) {
     id,
   ]);
   return true;
+}
+
+export async function createAdminEnInstitucion(params: {
+  institucionId: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  contrasenia: string;
+}): Promise<CreateAdminEnInstitucionResult> {
+  const { institucionId, nombre, apellido, email, contrasenia } = params;
+
+  const [instRows]: any[] = await pool.query(
+    `SELECT id, activa FROM institucion WHERE id = ? LIMIT 1;`,
+    [institucionId]
+  );
+
+  if (!instRows || instRows.length === 0) return 'INSTITUCION_NOT_FOUND';
+  if (Number(instRows[0].activa) !== 1) return 'INSTITUCION_INACTIVA';
+
+  const hash = await bcrypt.hash(contrasenia, 10);
+
+  try {
+    const [result]: any[] = await pool.query(
+      `INSERT INTO usuario (nombre, apellido, email, contrasenia_hash, rol, institucion_id, activo)
+       VALUES (?, ?, ?, ?, 'ADMIN', ?, 1);`,
+      [nombre, apellido, email, hash, institucionId]
+    );
+
+    return {
+      admin: {
+        id: Number(result.insertId),
+        nombre,
+        apellido,
+        email,
+        rol: 'ADMIN',
+        institucion_id: institucionId,
+        activo: 1,
+      },
+    };
+  } catch (e: any) {
+    if (e?.code === 'ER_DUP_ENTRY') return 'ADMIN_EMAIL_DUP';
+    throw e;
+  }
 }

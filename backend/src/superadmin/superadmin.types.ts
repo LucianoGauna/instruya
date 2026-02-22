@@ -2,7 +2,7 @@ export interface CreateInstitucionBody {
   institucion: {
     nombre: string;
     email: string;
-    direccion?: string | null;
+    direccion: string;
   };
   admin: {
     nombre: string;
@@ -26,5 +26,28 @@ export type CreateInstitucionResult =
       admin: {
         id: number;
         email: string;
+      };
+    };
+
+export interface CreateAdminEnInstitucionBody {
+  nombre: string;
+  apellido: string;
+  email: string;
+  contrasenia: string;
+}
+
+export type CreateAdminEnInstitucionResult =
+  | 'INSTITUCION_NOT_FOUND'
+  | 'INSTITUCION_INACTIVA'
+  | 'ADMIN_EMAIL_DUP'
+  | {
+      admin: {
+        id: number;
+        nombre: string;
+        apellido: string;
+        email: string;
+        rol: 'ADMIN';
+        institucion_id: number;
+        activo: 1;
       };
     };

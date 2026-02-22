@@ -1,11 +1,15 @@
 import type { Request, Response } from 'express';
 import {
+  createAdminEnInstitucion,
   createInstitucionConAdmin,
   findInstituciones,
   setInstitucionActiva,
   updateInstitucion,
 } from './superadmin.service';
-import type { CreateInstitucionBody } from './superadmin.types';
+import type {
+  CreateAdminEnInstitucionBody,
+  CreateInstitucionBody,
+} from './superadmin.types';
 
 export async function postCrearInstitucionConAdmin(
   req: Request,
@@ -52,12 +56,10 @@ export async function postCrearInstitucionConAdmin(
     });
 
     if (result === 'INSTITUCION_EMAIL_DUP') {
-      return res
-        .status(409)
-        .json({
-          ok: false,
-          message: 'Ya existe una institución con ese email',
-        });
+      return res.status(409).json({
+        ok: false,
+        message: 'Ya existe una institución con ese email',
+      });
     }
     if (result === 'ADMIN_EMAIL_DUP') {
       return res
@@ -162,6 +164,58 @@ export async function patchDesactivarInstitucion(req: Request, res: Response) {
     return res.json({ ok: true });
   } catch (e) {
     console.error('Error en patchDesactivarInstitucion:', e);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function postCrearAdminEnInstitucion(req: Request, res: Response) {
+  const institucionId = Number(req.params.id);
+  if (!Number.isFinite(institucionId)) {
+    return res.status(400).json({ ok: false, message: 'id inválido' });
+  }
+
+  const body = req.body as CreateAdminEnInstitucionBody;
+  const nombre = String(body?.nombre ?? '').trim();
+  const apellido = String(body?.apellido ?? '').trim();
+  const email = String(body?.email ?? '').trim();
+  const contrasenia = String(body?.contrasenia ?? '');
+
+  if (!nombre || !apellido || !email || !contrasenia) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'Faltan campos requeridos' });
+  }
+
+  try {
+    const result = await createAdminEnInstitucion({
+      institucionId,
+      nombre,
+      apellido,
+      email,
+      contrasenia,
+    });
+
+    if (result === 'INSTITUCION_NOT_FOUND') {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Institución no encontrada' });
+    }
+    if (result === 'INSTITUCION_INACTIVA') {
+      return res
+        .status(409)
+        .json({ ok: false, message: 'La institución está inactiva' });
+    }
+    if (result === 'ADMIN_EMAIL_DUP') {
+      return res
+        .status(409)
+        .json({ ok: false, message: 'Ya existe un usuario con ese email' });
+    }
+
+    return res.status(201).json({ ok: true, ...result });
+  } catch (error) {
+    console.error('Error en postCrearAdminEnInstitucion:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });
