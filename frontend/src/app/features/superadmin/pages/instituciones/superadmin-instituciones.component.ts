@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import {
+  AdminDeInstitucion,
   Institucion,
   SuperadminInstitucionesService,
 } from '../../services/superadmin-instituciones.service';
@@ -65,6 +66,12 @@ export class SuperadminInstitucionesComponent {
   newAdminApellido = signal('');
   newAdminEmail = signal('');
   newAdminPass = signal('');
+
+  viewAdminsDialogVisible = signal(false);
+  viewAdminsTargetInstitucion = signal<Institucion | null>(null);
+  loadingAdmins = signal(false);
+  adminsError = signal<string | null>(null);
+  admins = signal<AdminDeInstitucion[]>([]);
 
   ngOnInit() {
     this.loadInstituciones();
@@ -369,6 +376,36 @@ export class SuperadminInstitucionesComponent {
           });
         },
       });
+  }
+
+  openViewAdminsDialog(i: Institucion) {
+    this.viewAdminsTargetInstitucion.set(i);
+    this.viewAdminsDialogVisible.set(true);
+    this.loadingAdmins.set(true);
+    this.adminsError.set(null);
+    this.admins.set([]);
+
+    this.service
+      .getAdminsByInstitucion(i.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.admins.set(res.admins);
+          this.loadingAdmins.set(false);
+        },
+        error: () => {
+          this.adminsError.set('No se pudieron cargar los administradores');
+          this.loadingAdmins.set(false);
+        },
+      });
+  }
+
+  closeViewAdminsDialog() {
+    this.viewAdminsDialogVisible.set(false);
+    this.viewAdminsTargetInstitucion.set(null);
+    this.loadingAdmins.set(false);
+    this.adminsError.set(null);
+    this.admins.set([]);
   }
 
   private loadInstituciones() {

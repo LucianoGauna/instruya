@@ -144,6 +144,15 @@
                   text
                   rounded
                   size="small"
+                  icon="pi pi-users"
+                  severity="help"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="openViewAdminsDialog(i)"
+                ></p-button>
+                <p-button
+                  text
+                  rounded
+                  size="small"
                   icon="pi pi-user-plus"
                   severity="info"
                   [disabled]="updatingId() === i.id"
@@ -252,6 +261,57 @@
           [loading]="creatingAdmin()"
           [disabled]="creatingAdmin()"
           (onClick)="createAdmin()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="viewAdminsDialogVisible()"
+    [style]="{ width: '38rem', maxWidth: '95vw' }"
+    (visibleChange)="viewAdminsDialogVisible.set($event)"
+    (onHide)="closeViewAdminsDialog()"
+  >
+    <ng-template pTemplate="header">
+      <p class="font-lato text-2xl font-bold">Administradores</p>
+    </ng-template>
+
+    @if (viewAdminsTargetInstitucion()) {
+      <div class="mb-3 text-sm text-gray-700">
+        Institución:
+        <span class="font-bold">{{ viewAdminsTargetInstitucion()!.nombre }}</span>
+      </div>
+    }
+
+    @if (loadingAdmins()) {
+      <p>Cargando...</p>
+    } @else if (adminsError()) {
+      <p class="text-red-600">{{ adminsError() }}</p>
+    } @else if (admins().length === 0) {
+      <p>No hay administradores cargados.</p>
+    } @else {
+      <div class="space-y-2 max-h-96 overflow-auto pr-1">
+        @for (a of admins(); track a.id) {
+          <div class="rounded-lg border p-3">
+            <div class="font-medium">{{ a.apellido }}, {{ a.nombre }}</div>
+            <div class="text-sm text-gray-600">{{ a.email }}</div>
+            <div class="text-sm text-gray-600">
+              Estado: {{ a.activo === 1 ? "Activo" : "Inactivo" }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end">
+        <p-button
+          label="Cerrar"
+          severity="secondary"
+          (onClick)="closeViewAdminsDialog()"
         ></p-button>
       </div>
     </ng-template>

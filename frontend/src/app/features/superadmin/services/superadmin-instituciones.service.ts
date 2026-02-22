@@ -51,6 +51,20 @@ export interface CreateAdminEnInstitucionResponse {
   };
 }
 
+export interface AdminDeInstitucion {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  activo: 0 | 1;
+  created_at: string;
+}
+
+export interface GetAdminsByInstitucionResponse {
+  ok: boolean;
+  admins: AdminDeInstitucion[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class SuperadminInstitucionesService {
   private http = inject(HttpClient);
@@ -100,6 +114,12 @@ export class SuperadminInstitucionesService {
     return this.http.post<CreateAdminEnInstitucionResponse>(
       `${this.apiUrl}/${id}/admins`,
       payload,
+    );
+  }
+
+  getAdminsByInstitucion(id: number) {
+    return this.http.get<GetAdminsByInstitucionResponse>(
+      `${this.apiUrl}/${id}/admins`,
     );
   }
 }
