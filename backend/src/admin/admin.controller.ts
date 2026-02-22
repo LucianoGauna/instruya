@@ -14,6 +14,7 @@ import {
   findInscriptosPendientes,
   aceptarInscripcion,
   rechazarInscripcion,
+  findDashboardResumenByAdminUserId,
 } from './admin.service';
 import { PERIODOS_VALIDOS } from './admin.types';
 
@@ -135,7 +136,7 @@ export async function updateCarrera(req: Request, res: Response) {
     const carrera = await updateCarreraNombreForAdmin(
       adminUserId,
       carreraId,
-      nombreLimpio
+      nombreLimpio,
     );
 
     if (!carrera) {
@@ -187,7 +188,7 @@ export async function getMateriasDeCarrera(req: Request, res: Response) {
 
     const materias = await findMateriasByCarreraForAdmin(
       adminUserId,
-      carreraId
+      carreraId,
     );
 
     if (materias === null) {
@@ -233,7 +234,7 @@ export async function createMateriaEnCarrera(req: Request, res: Response) {
       adminUserId,
       carreraId,
       nombre.trim(),
-      docenteId
+      docenteId,
     );
 
     if (result === 'CARRERA_NOT_FOUND') {
@@ -343,7 +344,7 @@ export async function updateMateria(req: Request, res: Response) {
       adminUserId,
       materiaId,
       nombre.trim(),
-      docenteId
+      docenteId,
     );
 
     if (result === 'DOCENTE_NOT_FOUND') {
@@ -482,6 +483,27 @@ export async function patchRechazarInscripcion(req: Request, res: Response) {
     return res.json({ ok: true });
   } catch (error) {
     console.error('Error en patchRechazarInscripcion:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function getDashboardResumen(req: Request, res: Response) {
+  try {
+    const adminUserId = (req as AuthedRequest).user.id;
+    const resumen = await findDashboardResumenByAdminUserId(adminUserId);
+
+    if (!resumen) {
+      return res.status(404).json({
+        ok: false,
+        message: 'No se encontró institución para este admin',
+      });
+    }
+
+    return res.json({ ok: true, resumen });
+  } catch (error) {
+    console.error('Error en getDashboardResumen:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

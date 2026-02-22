@@ -12,6 +12,7 @@ import {
   getDocentes,
   getInscriptosPendientes,
   getMateriasDeCarrera,
+  getDashboardResumen,
   patchAceptarInscripcion,
   patchRechazarInscripcion,
   updateCarrera,
@@ -23,108 +24,115 @@ import { Roles } from '../auth/auth.types';
 const router = Router();
 
 router.get(
+  '/dashboard/resumen',
+  authMiddleware,
+  requireRole([Roles.ADMIN]),
+  getDashboardResumen,
+);
+
+router.get(
   '/carreras',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  getCarreras
+  getCarreras,
 );
 
 router.post(
   '/carreras',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  createCarrera
+  createCarrera,
 );
 
 router.patch(
   '/carreras/:id/desactivar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  desactivarCarrera
+  desactivarCarrera,
 );
 
 router.patch(
   '/carreras/:id/activar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  activarCarrera
+  activarCarrera,
 );
 
 router.patch(
   '/carreras/:id',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  updateCarrera
+  updateCarrera,
 );
 
 router.get(
   '/docentes',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  getDocentes
+  getDocentes,
 );
 
 router.get(
   '/carreras/:id/materias',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  getMateriasDeCarrera
+  getMateriasDeCarrera,
 );
 
 router.post(
   '/carreras/:id/materias',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  createMateriaEnCarrera
+  createMateriaEnCarrera,
 );
 
 router.patch(
   '/materias/:id/activar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  activarMateria
+  activarMateria,
 );
 
 router.patch(
   '/materias/:id/desactivar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  desactivarMateria
+  desactivarMateria,
 );
 
 router.patch(
   '/materias/:id',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  updateMateria
+  updateMateria,
 );
 
 router.get(
   '/carreras/:id',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  getCarreraById
+  getCarreraById,
 );
 
 router.get(
   '/inscripciones/pendientes',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  getInscriptosPendientes
+  getInscriptosPendientes,
 );
 
 router.patch(
   '/inscripciones/:inscripcionId/aceptar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  patchAceptarInscripcion
+  patchAceptarInscripcion,
 );
 
 router.patch(
   '/inscripciones/:inscripcionId/rechazar',
   authMiddleware,
   requireRole([Roles.ADMIN]),
-  patchRechazarInscripcion
+  patchRechazarInscripcion,
 );
 
 export default router;

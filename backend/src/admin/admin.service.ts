@@ -25,7 +25,7 @@ export async function findCarrerasByAdminUserId(adminUserId: number) {
 
 export async function createCarreraForAdmin(
   adminUserId: number,
-  nombre: string
+  nombre: string,
 ) {
   const institucionId = await findInstitucionIdByUserId(adminUserId);
 
@@ -35,7 +35,7 @@ export async function createCarreraForAdmin(
 
   const [result]: any[] = await pool.query(
     `INSERT INTO carrera (institucion_id, nombre) VALUES (?, ?);`,
-    [institucionId, nombre]
+    [institucionId, nombre],
   );
 
   return {
@@ -46,11 +46,11 @@ export async function createCarreraForAdmin(
 }
 
 async function findInstitucionIdByUserId(
-  userId: number
+  userId: number,
 ): Promise<number | null> {
   const [rows]: any[] = await pool.query(
     `SELECT institucion_id FROM usuario WHERE id = ? LIMIT 1;`,
-    [userId]
+    [userId],
   );
 
   if (!rows || rows.length === 0) return null;
@@ -60,14 +60,14 @@ async function findInstitucionIdByUserId(
 export async function setCarreraActivaForAdmin(
   adminUserId: number,
   carreraId: number,
-  activa: 0 | 1
+  activa: 0 | 1,
 ): Promise<boolean> {
   const institucionId = await findInstitucionIdByUserId(adminUserId);
   if (!institucionId) return false;
 
   const [existsRows]: any[] = await pool.query(
     `SELECT id FROM carrera WHERE id = ? AND institucion_id = ? LIMIT 1;`,
-    [carreraId, institucionId]
+    [carreraId, institucionId],
   );
 
   if (!existsRows || existsRows.length === 0) return false;
@@ -76,7 +76,7 @@ export async function setCarreraActivaForAdmin(
     `UPDATE carrera
      SET activa = ?
      WHERE id = ? AND institucion_id = ?;`,
-    [activa, carreraId, institucionId]
+    [activa, carreraId, institucionId],
   );
 
   return true;
@@ -85,7 +85,7 @@ export async function setCarreraActivaForAdmin(
 export async function updateCarreraNombreForAdmin(
   adminUserId: number,
   carreraId: number,
-  nombre: string
+  nombre: string,
 ): Promise<{ id: number; nombre: string } | null> {
   const institucionId = await findInstitucionIdByUserId(adminUserId);
   if (!institucionId) return null;
@@ -93,14 +93,14 @@ export async function updateCarreraNombreForAdmin(
   // Validar que la carrera exista y sea de su institución (evita confusión con affectedRows=0)
   const [existsRows]: any[] = await pool.query(
     `SELECT id FROM carrera WHERE id = ? AND institucion_id = ? LIMIT 1;`,
-    [carreraId, institucionId]
+    [carreraId, institucionId],
   );
 
   if (!existsRows || existsRows.length === 0) return null;
 
   await pool.query(
     `UPDATE carrera SET nombre = ? WHERE id = ? AND institucion_id = ?;`,
-    [nombre, carreraId, institucionId]
+    [nombre, carreraId, institucionId],
   );
 
   return { id: carreraId, nombre };
@@ -127,7 +127,7 @@ export async function findDocentesByAdminUserId(adminUserId: number) {
 
 export async function findMateriasByCarreraForAdmin(
   adminUserId: number,
-  carreraId: number
+  carreraId: number,
 ) {
   // Validar que la carrera pertenezca a la institución del admin
   const [carreraRows]: any[] = await pool.query(
@@ -138,7 +138,7 @@ export async function findMateriasByCarreraForAdmin(
     WHERE admin.id = ? AND c.id = ?
     LIMIT 1;
     `,
-    [adminUserId, carreraId]
+    [adminUserId, carreraId],
   );
 
   if (!carreraRows || carreraRows.length === 0) {
@@ -161,7 +161,7 @@ export async function findMateriasByCarreraForAdmin(
     WHERE m.carrera_id = ?
     ORDER BY m.nombre;
     `,
-    [carreraId]
+    [carreraId],
   );
 
   return rows;
@@ -171,7 +171,7 @@ export async function createMateriaForAdminInCarrera(
   adminUserId: number,
   carreraId: number,
   nombre: string,
-  docenteId: number
+  docenteId: number,
 ): Promise<CreateMateriaResult> {
   // Validar que la carrera pertenece a la institución del admin
   const [carreraRows]: any[] = await pool.query(
@@ -182,7 +182,7 @@ export async function createMateriaForAdminInCarrera(
     WHERE admin.id = ? AND c.id = ?
     LIMIT 1;
     `,
-    [adminUserId, carreraId]
+    [adminUserId, carreraId],
   );
 
   if (!carreraRows || carreraRows.length === 0) {
@@ -201,7 +201,7 @@ export async function createMateriaForAdminInCarrera(
       AND u.activo = 1
     LIMIT 1;
     `,
-    [adminUserId, docenteId]
+    [adminUserId, docenteId],
   );
 
   if (!docenteRows || docenteRows.length === 0) {
@@ -213,7 +213,7 @@ export async function createMateriaForAdminInCarrera(
     INSERT INTO materia (carrera_id, nombre, docente_id)
     VALUES (?, ?, ?);
     `,
-    [carreraId, nombre, docenteId]
+    [carreraId, nombre, docenteId],
   );
 
   return {
@@ -227,7 +227,7 @@ export async function createMateriaForAdminInCarrera(
 export async function setMateriaActivaForAdmin(
   adminUserId: number,
   materiaId: number,
-  activa: 0 | 1
+  activa: 0 | 1,
 ): Promise<boolean> {
   // Exist check (evita falsos 404 si no cambia nada)
   const [existsRows]: any[] = await pool.query(
@@ -240,7 +240,7 @@ export async function setMateriaActivaForAdmin(
       AND m.id = ?
     LIMIT 1;
     `,
-    [adminUserId, materiaId]
+    [adminUserId, materiaId],
   );
 
   if (!existsRows || existsRows.length === 0) {
@@ -256,7 +256,7 @@ export async function setMateriaActivaForAdmin(
     WHERE admin.id = ?
       AND m.id = ?;
     `,
-    [activa, adminUserId, materiaId]
+    [activa, adminUserId, materiaId],
   );
 
   return true;
@@ -266,7 +266,7 @@ export async function updateMateriaForAdmin(
   adminUserId: number,
   materiaId: number,
   nombre: string,
-  docenteId: number
+  docenteId: number,
 ): Promise<UpdateMateriaResult> {
   // Validar materia primero (pertenece a institución del admin)
   const [matRows]: any[] = await pool.query(
@@ -279,7 +279,7 @@ export async function updateMateriaForAdmin(
       AND m.id = ?
     LIMIT 1;
     `,
-    [adminUserId, materiaId]
+    [adminUserId, materiaId],
   );
 
   if (!matRows || matRows.length === 0) {
@@ -298,7 +298,7 @@ export async function updateMateriaForAdmin(
       AND u.activo = 1
     LIMIT 1;
     `,
-    [adminUserId, docenteId]
+    [adminUserId, docenteId],
   );
 
   if (!docRows || docRows.length === 0) {
@@ -315,7 +315,7 @@ export async function updateMateriaForAdmin(
     WHERE admin.id = ?
       AND m.id = ?;
     `,
-    [nombre, docenteId, adminUserId, materiaId]
+    [nombre, docenteId, adminUserId, materiaId],
   );
 
   return 'OK';
@@ -323,7 +323,7 @@ export async function updateMateriaForAdmin(
 
 export async function findCarreraByIdForAdmin(
   adminUserId: number,
-  carreraId: number
+  carreraId: number,
 ) {
   const [rows]: any[] = await pool.query(
     `
@@ -338,7 +338,7 @@ export async function findCarreraByIdForAdmin(
       AND c.id = ?
     LIMIT 1;
     `,
-    [adminUserId, carreraId]
+    [adminUserId, carreraId],
   );
 
   return rows.length ? rows[0] : null;
@@ -383,7 +383,7 @@ export async function findInscriptosPendientes() {
 
     WHERE im.estado = 'PENDIENTE'
     ORDER BY im.created_at DESC;
-    `
+    `,
   );
 
   return (rows ?? []).map((r: any) => ({
@@ -424,7 +424,7 @@ export async function aceptarInscripcion(params: {
 
   const [rows]: any[] = await pool.query(
     `SELECT id, estado FROM inscripcion_materia WHERE id = ? LIMIT 1;`,
-    [inscripcionId]
+    [inscripcionId],
   );
 
   if (!rows || rows.length === 0) return 'NOT_FOUND';
@@ -439,7 +439,7 @@ export async function aceptarInscripcion(params: {
         fecha = CURDATE()
     WHERE id = ?;
     `,
-    [anio, periodo, inscripcionId]
+    [anio, periodo, inscripcionId],
   );
 
   return 'OK';
@@ -450,7 +450,7 @@ export async function rechazarInscripcion(params: { inscripcionId: number }) {
 
   const [rows]: any[] = await pool.query(
     `SELECT id, estado FROM inscripcion_materia WHERE id = ? LIMIT 1;`,
-    [inscripcionId]
+    [inscripcionId],
   );
 
   if (!rows || rows.length === 0) return 'NOT_FOUND';
@@ -465,8 +465,72 @@ export async function rechazarInscripcion(params: { inscripcionId: number }) {
         fecha = CURDATE()
     WHERE id = ?;
     `,
-    [inscripcionId]
+    [inscripcionId],
   );
 
   return 'OK';
+}
+
+export async function findDashboardResumenByAdminUserId(adminUserId: number) {
+  const institucionId = await findInstitucionIdByUserId(adminUserId);
+  if (!institucionId) return null;
+
+  const [instRows]: any[] = await pool.query(
+    `SELECT id, nombre FROM institucion WHERE id = ? LIMIT 1;`,
+    [institucionId],
+  );
+  if (!instRows || instRows.length === 0) return null;
+
+  const [carrerasRows]: any[] = await pool.query(
+    `
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN activa = 1 THEN 1 ELSE 0 END) AS activas
+    FROM carrera
+    WHERE institucion_id = ?;
+    `,
+    [institucionId],
+  );
+
+  const [materiasRows]: any[] = await pool.query(
+    `
+    SELECT
+      COUNT(*) AS total,
+      SUM(CASE WHEN m.activa = 1 THEN 1 ELSE 0 END) AS activas
+    FROM materia m
+    INNER JOIN carrera c ON c.id = m.carrera_id
+    WHERE c.institucion_id = ?;
+    `,
+    [institucionId],
+  );
+
+  const [pendientesRows]: any[] = await pool.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM inscripcion_materia im
+    INNER JOIN materia m ON m.id = im.materia_id
+    INNER JOIN carrera c ON c.id = m.carrera_id
+    WHERE c.institucion_id = ?
+      AND im.estado = 'PENDIENTE';
+    `,
+    [institucionId],
+  );
+
+  return {
+    institucion: {
+      id: Number(instRows[0].id),
+      nombre: String(instRows[0].nombre),
+    },
+    carreras: {
+      total: Number(carrerasRows?.[0]?.total ?? 0),
+      activas: Number(carrerasRows?.[0]?.activas ?? 0),
+    },
+    materias: {
+      total: Number(materiasRows?.[0]?.total ?? 0),
+      activas: Number(materiasRows?.[0]?.activas ?? 0),
+    },
+    inscripciones: {
+      pendientes: Number(pendientesRows?.[0]?.total ?? 0),
+    },
+  };
 }
