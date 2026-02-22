@@ -19,10 +19,7 @@ export async function postCrearInstitucionConAdmin(
 
   const nombreInst = String(body.institucion.nombre ?? '').trim();
   const emailInst = String(body.institucion.email ?? '').trim();
-  const direccion =
-    body.institucion.direccion == null
-      ? null
-      : String(body.institucion.direccion).trim();
+  const direccion = String(body.institucion.direccion ?? '').trim();
 
   const adminNombre = String(body.admin.nombre ?? '').trim();
   const adminApellido = String(body.admin.apellido ?? '').trim();
@@ -32,6 +29,7 @@ export async function postCrearInstitucionConAdmin(
   if (
     !nombreInst ||
     !emailInst ||
+    !direccion ||
     !adminNombre ||
     !adminApellido ||
     !adminEmail ||
@@ -97,20 +95,13 @@ export async function patchInstitucion(req: Request, res: Response) {
     typeof req.body?.nombre === 'string' ? req.body.nombre.trim() : '';
   const email =
     typeof req.body?.email === 'string' ? req.body.email.trim() : '';
-  const hasDireccion = Object.prototype.hasOwnProperty.call(
-    req.body ?? {},
-    'direccion'
-  );
-  const direccion = hasDireccion
-    ? typeof req.body?.direccion === 'string'
-      ? req.body.direccion.trim()
-      : null
-    : undefined;
+  const direccion =
+    typeof req.body?.direccion === 'string' ? req.body.direccion.trim() : '';
 
-  if (!nombre || !email)
+  if (!nombre || !email || !direccion)
     return res
       .status(400)
-      .json({ ok: false, message: 'nombre/email requeridos' });
+      .json({ ok: false, message: 'nombre/email/direccion requeridos' });
 
   try {
     const updated = await updateInstitucion({ id, nombre, email, direccion });
@@ -124,6 +115,11 @@ export async function patchInstitucion(req: Request, res: Response) {
       return res
         .status(409)
         .json({ ok: false, message: 'Email ya usado por otra institución' });
+    }
+    if (e?.code === 'ER_BAD_NULL_ERROR') {
+      return res
+        .status(400)
+        .json({ ok: false, message: 'direccion no puede ser null' });
     }
     console.error('Error en patchInstitucion:', e);
     return res
