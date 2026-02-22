@@ -18,6 +18,9 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectButtonModule } from 'primeng/selectbutton';
+
+type CarrerasFiltro = 'TODAS' | 'ACTIVAS' | 'INACTIVAS';
 
 @Component({
   selector: 'app-admin-carreras',
@@ -27,6 +30,7 @@ import { TooltipModule } from 'primeng/tooltip';
     ButtonModule,
     FormsModule,
     InputTextModule,
+    SelectButtonModule,
     ToastModule,
     TooltipModule,
   ],
@@ -49,6 +53,13 @@ export class AdminCarrerasComponent {
   updatingId = signal<number | null>(null);
   editingId = signal<number | null>(null);
   editNombre = signal('');
+
+  filterOptions: Array<{ label: string; value: CarrerasFiltro }> = [
+    { label: 'Todas', value: 'TODAS' },
+    { label: 'Activas', value: 'ACTIVAS' },
+    { label: 'Inactivas', value: 'INACTIVAS' },
+  ];
+  selectedFilter: CarrerasFiltro = 'TODAS';
 
   ngOnInit() {
     this.loadCarreras();
@@ -261,6 +272,15 @@ export class AdminCarrerasComponent {
 
   verMaterias(c: Carrera) {
     this.router.navigate(['/admin/carreras', c.id, 'materias']);
+  }
+
+  carrerasFiltradas(): Carrera[] {
+    const all = this.carreras();
+    if (this.selectedFilter === 'TODAS') return all;
+    if (this.selectedFilter === 'ACTIVAS') {
+      return all.filter((c) => this.isActiva(c));
+    }
+    return all.filter((c) => !this.isActiva(c));
   }
 
   private loadCarreras() {

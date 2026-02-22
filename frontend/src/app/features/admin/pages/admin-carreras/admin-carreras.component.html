@@ -32,6 +32,16 @@
     ></p-button>
   </div>
 
+  <div>
+    <p-selectbutton
+      optionLabel="label"
+      optionValue="value"
+      ariaLabel="Filtro de carreras"
+      [options]="filterOptions"
+      [(ngModel)]="selectedFilter"
+    ></p-selectbutton>
+  </div>
+
   @if (loading()) {
     <p>Cargando...</p>
   } @else if (error()) {
@@ -41,7 +51,7 @@
       <p>No hay carreras cargadas.</p>
     } @else {
       <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
-        @for (c of carreras(); track c.id) {
+        @for (c of carrerasFiltradas(); track c.id) {
           <div
             class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between"
           >
@@ -142,6 +152,9 @@
           </div>
         }
       </div>
+      @if (carrerasFiltradas().length === 0) {
+        <p class="text-gray-600 mt-2">No hay carreras para este filtro.</p>
+      }
     }
   }
 </div>
