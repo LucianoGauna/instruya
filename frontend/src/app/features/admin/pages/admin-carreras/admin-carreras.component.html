@@ -1,19 +1,18 @@
 <p-toast></p-toast>
-<div class="flex flex-col gap-5 font-sans">
+<div class="flex flex-col gap-5">
   <div class="w-full flex items-center justify-between">
     <p-button
       text
       rounded
       severity="secondary"
-      icon="pi pi-arrow-left"
-      
       styleClass="!w-5 hover:!bg-transparent !border-none"
+      icon="pi pi-arrow-left"
       (onClick)="goBack()"
     ></p-button>
-    
+
     <h1 class="text-2xl sm:text-4xl font-semibold font-lato">Carreras</h1>
   </div>
-  
+
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
     <input
       pInputText
@@ -24,16 +23,15 @@
       [ngModel]="nuevoNombre()"
       (ngModelChange)="nuevoNombre.set($event)"
     />
-  
+
     <p-button
       label="Crear"
       icon="pi pi-plus"
-      styleClass="!bg-[#B8CCE0] !text-[#1F3347] !border-none"
       [disabled]="creating()"
       (onClick)="create()"
     ></p-button>
   </div>
-  
+
   @if (loading()) {
     <p>Cargando...</p>
   } @else if (error()) {
@@ -44,7 +42,9 @@
     } @else {
       <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
         @for (c of carreras(); track c.id) {
-          <div class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between">
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between"
+          >
             <div class="flex-1">
               @if (editingId() === c.id) {
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -64,7 +64,7 @@
                       [disabled]="updatingId() === c.id"
                       (onClick)="saveEdit(c)"
                     ></p-button>
-  
+
                     <p-button
                       rounded
                       size="small"
@@ -83,7 +83,7 @@
                 </div>
               }
             </div>
-  
+
             <div class="flex items-center gap-2">
               @if (editingId() !== c.id) {
                 <p-button
