@@ -19,11 +19,6 @@ export class SuperadminLayoutComponent {
       icon: 'pi pi-building',
       route: '/superadmin/instituciones',
     },
-    {
-      label: 'Administradores',
-      icon: 'pi pi-users',
-      route: '/superadmin/admins',
-    },
   ];
 
   toggleSidebar() {
