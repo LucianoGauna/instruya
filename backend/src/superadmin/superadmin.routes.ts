@@ -10,6 +10,8 @@ import {
   patchDesactivarInstitucion,
   postCrearAdminEnInstitucion,
   getAdminsByInstitucion,
+  patchActivarAdmin,
+  patchDesactivarAdmin,
 } from './superadmin.controller';
 
 const router = Router();
@@ -61,6 +63,20 @@ router.get(
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
   getAdminsByInstitucion,
+);
+
+router.patch(
+  '/admins/:adminId/activar',
+  authMiddleware,
+  requireRole([Roles.SUPERADMIN]),
+  patchActivarAdmin,
+);
+
+router.patch(
+  '/admins/:adminId/desactivar',
+  authMiddleware,
+  requireRole([Roles.SUPERADMIN]),
+  patchDesactivarAdmin,
 );
 
 export default router;

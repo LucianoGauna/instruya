@@ -4,6 +4,7 @@ import {
   createInstitucionConAdmin,
   findAdminsByInstitucion,
   findInstituciones,
+  setAdminActivoById,
   setInstitucionActiva,
   updateInstitucion,
 } from './superadmin.service';
@@ -57,12 +58,10 @@ export async function postCrearInstitucionConAdmin(
     });
 
     if (result === 'INSTITUCION_EMAIL_DUP') {
-      return res
-        .status(409)
-        .json({
-          ok: false,
-          message: 'Ya existe una institución con ese email',
-        });
+      return res.status(409).json({
+        ok: false,
+        message: 'Ya existe una institución con ese email',
+      });
     }
     if (result === 'ADMIN_EMAIL_DUP') {
       return res
@@ -173,10 +172,7 @@ export async function patchDesactivarInstitucion(req: Request, res: Response) {
   }
 }
 
-export async function postCrearAdminEnInstitucion(
-  req: Request,
-  res: Response
-) {
+export async function postCrearAdminEnInstitucion(req: Request, res: Response) {
   const institucionId = Number(req.params.id);
   if (!Number.isFinite(institucionId)) {
     return res.status(400).json({ ok: false, message: 'id inválido' });
@@ -252,6 +248,50 @@ export async function getAdminsByInstitucion(req: Request, res: Response) {
     return res.json({ ok: true, admins });
   } catch (error) {
     console.error('Error en getAdminsByInstitucion:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function patchActivarAdmin(req: Request, res: Response) {
+  const adminId = Number(req.params.adminId);
+  if (!Number.isFinite(adminId)) {
+    return res.status(400).json({ ok: false, message: 'adminId inválido' });
+  }
+
+  try {
+    const ok = await setAdminActivoById(adminId, 1);
+    if (!ok) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Administrador no encontrado' });
+    }
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error en patchActivarAdmin:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function patchDesactivarAdmin(req: Request, res: Response) {
+  const adminId = Number(req.params.adminId);
+  if (!Number.isFinite(adminId)) {
+    return res.status(400).json({ ok: false, message: 'adminId inválido' });
+  }
+
+  try {
+    const ok = await setAdminActivoById(adminId, 0);
+    if (!ok) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Administrador no encontrado' });
+    }
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error('Error en patchDesactivarAdmin:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

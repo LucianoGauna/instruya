@@ -224,3 +224,30 @@ export async function findAdminsByInstitucion(institucionId: number) {
     }),
   );
 }
+
+export async function setAdminActivoById(adminId: number, activo: 0 | 1) {
+  const [rows]: any[] = await pool.query(
+    `
+    SELECT id
+    FROM usuario
+    WHERE id = ?
+      AND rol = 'ADMIN'
+    LIMIT 1;
+    `,
+    [adminId],
+  );
+
+  if (!rows || rows.length === 0) return false;
+
+  await pool.query(
+    `
+    UPDATE usuario
+    SET activo = ?
+    WHERE id = ?
+      AND rol = 'ADMIN';
+    `,
+    [activo, adminId],
+  );
+
+  return true;
+}
