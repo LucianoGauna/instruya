@@ -3,7 +3,9 @@
         <p-button [icon]="isSidebarOpen() ? 'pi pi-times' : 'pi pi-bars'" text severity="secondary" (click)="openSidebar()"/>
     </ng-template>
     <ng-template #end>
-        <div class="h-8 w-8 border cursor-pointer border-gray-500 rounded-full" (click)="menu.toggle($event)"></div>
+        <div class="h-8 w-8 border flex items-center justify-center cursor-pointer border-gray-500 rounded-full" (click)="menu.toggle($event)">
+            <i class="pi pi-user"></i>
+        </div>
         <p-menu #menu appendTo="body" [model]="items" [popup]="true" />
     </ng-template>
 </p-toolbar>
