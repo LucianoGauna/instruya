@@ -26,7 +26,7 @@ export async function findMisMateriasDocente(docenteId: number) {
 
 export async function findInscriptosByMateriaForDocente(
   docenteId: number,
-  materiaId: number
+  materiaId: number,
 ) {
   // Validar que la materia sea del docente
   const [matRows]: any[] = await pool.query(
@@ -37,7 +37,7 @@ export async function findInscriptosByMateriaForDocente(
       AND docente_id = ?
     LIMIT 1;
     `,
-    [materiaId, docenteId]
+    [materiaId, docenteId],
   );
 
   if (!matRows || matRows.length === 0) {
@@ -62,7 +62,7 @@ export async function findInscriptosByMateriaForDocente(
       AND u.activo = 1
     ORDER BY u.apellido, u.nombre;
     `,
-    [materiaId]
+    [materiaId],
   );
 
   return rows;
@@ -70,7 +70,7 @@ export async function findInscriptosByMateriaForDocente(
 
 export async function findCalificacionesByMateriaForDocente(
   docenteId: number,
-  materiaId: number
+  materiaId: number,
 ) {
   // Validar que la materia sea del docente
   const [matRows]: any[] = await pool.query(
@@ -81,7 +81,7 @@ export async function findCalificacionesByMateriaForDocente(
       AND docente_id = ?
     LIMIT 1;
     `,
-    [materiaId, docenteId]
+    [materiaId, docenteId],
   );
 
   if (!matRows || matRows.length === 0) {
@@ -104,14 +104,14 @@ export async function findCalificacionesByMateriaForDocente(
       AND cal.docente_id = ?
     ORDER BY cal.fecha DESC, cal.id DESC;
     `,
-    [materiaId, docenteId]
+    [materiaId, docenteId],
   );
 
   return rows;
 }
 
 export async function createCalificacionForDocente(
-  params: CreateCalificacionInput
+  params: CreateCalificacionInput,
 ): Promise<CreateCalificacionResult> {
   const { docenteId, materiaId, alumnoId, tipo, fecha, nota, descripcion } =
     params;
@@ -119,7 +119,7 @@ export async function createCalificacionForDocente(
   // Materia del docente
   const [matRows]: any[] = await pool.query(
     `SELECT id FROM materia WHERE id = ? AND docente_id = ? LIMIT 1;`,
-    [materiaId, docenteId]
+    [materiaId, docenteId],
   );
   if (!matRows || matRows.length === 0) return 'MATERIA_NOT_FOUND';
 
@@ -133,7 +133,7 @@ export async function createCalificacionForDocente(
       AND estado = 'ACEPTADA'
     LIMIT 1;
     `,
-    [materiaId, alumnoId]
+    [materiaId, alumnoId],
   );
   if (!insRows || insRows.length === 0) return 'ALUMNO_NO_INSCRIPTO';
 
@@ -142,7 +142,7 @@ export async function createCalificacionForDocente(
     INSERT INTO calificacion (alumno_id, materia_id, tipo, fecha, nota, descripcion, docente_id)
     VALUES (?, ?, ?, ?, ?, ?, ?);
     `,
-    [alumnoId, materiaId, tipo, fecha, nota, descripcion ?? null, docenteId]
+    [alumnoId, materiaId, tipo, fecha, nota, descripcion ?? null, docenteId],
   );
 
   return {
@@ -158,7 +158,7 @@ export async function createCalificacionForDocente(
 }
 
 export async function updateCalificacionForDocente(
-  params: UpdateCalificacionInput
+  params: UpdateCalificacionInput,
 ): Promise<UpdateCalificacionResult> {
   const { docenteId, calificacionId, tipo, fecha, nota, descripcion } = params;
 
@@ -172,7 +172,7 @@ export async function updateCalificacionForDocente(
       AND m.docente_id = ?
     LIMIT 1;
     `,
-    [calificacionId, docenteId]
+    [calificacionId, docenteId],
   );
 
   if (!rows || rows.length === 0) return 'CALIFICACION_NOT_FOUND';
@@ -183,8 +183,72 @@ export async function updateCalificacionForDocente(
     SET tipo = ?, fecha = ?, nota = ?, descripcion = ?
     WHERE id = ? AND docente_id = ?;
     `,
-    [tipo, fecha, nota, descripcion ?? null, calificacionId, docenteId]
+    [tipo, fecha, nota, descripcion ?? null, calificacionId, docenteId],
   );
 
   return 'OK';
+}
+
+export async function findDashboardResumenByDocenteUserId(docenteId: number) {
+  const [userRows]: any[] = await pool.query(
+    `
+    SELECT
+      u.id,
+      i.id AS institucion_id,
+      i.nombre AS institucion_nombre
+    FROM usuario u
+    LEFT JOIN institucion i ON i.id = u.institucion_id
+    WHERE u.id = ?
+      AND u.rol = 'DOCENTE'
+    LIMIT 1;
+    `,
+    [docenteId],
+  );
+
+  if (!userRows || userRows.length === 0) return null;
+
+  const [materiasRows]: any[] = await pool.query(
+    `
+    SELECT
+      COUNT(*) AS total,
+      COUNT(DISTINCT m.carrera_id) AS carreras
+    FROM materia m
+    WHERE m.docente_id = ?
+      AND m.activa = 1;
+    `,
+    [docenteId],
+  );
+
+  const [inscriptosRows]: any[] = await pool.query(
+    `
+    SELECT
+      COUNT(*) AS inscripciones_aceptadas,
+      COUNT(DISTINCT im.alumno_id) AS alumnos_unicos
+    FROM inscripcion_materia im
+    INNER JOIN materia m ON m.id = im.materia_id
+    WHERE m.docente_id = ?
+      AND m.activa = 1
+      AND im.estado = 'ACEPTADA';
+    `,
+    [docenteId],
+  );
+
+  return {
+    institucion: userRows[0].institucion_id
+      ? {
+          id: Number(userRows[0].institucion_id),
+          nombre: String(userRows[0].institucion_nombre),
+        }
+      : null,
+    materias: {
+      total: Number(materiasRows?.[0]?.total ?? 0),
+      carreras: Number(materiasRows?.[0]?.carreras ?? 0),
+    },
+    alumnos: {
+      unicos_inscriptos: Number(inscriptosRows?.[0]?.alumnos_unicos ?? 0),
+      inscripciones_aceptadas: Number(
+        inscriptosRows?.[0]?.inscripciones_aceptadas ?? 0,
+      ),
+    },
+  };
 }

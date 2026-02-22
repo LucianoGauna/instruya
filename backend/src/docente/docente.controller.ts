@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import type { AuthedRequest } from '../auth/auth.types';
 import {
   createCalificacionForDocente,
+  findDashboardResumenByDocenteUserId,
   findCalificacionesByMateriaForDocente,
   findInscriptosByMateriaForDocente,
   findMisMateriasDocente,
@@ -34,7 +35,7 @@ export async function getInscriptosByMateria(req: Request, res: Response) {
 
     const inscriptos = await findInscriptosByMateriaForDocente(
       docenteId,
-      materiaId
+      materiaId,
     );
 
     if (inscriptos === null) {
@@ -45,7 +46,7 @@ export async function getInscriptosByMateria(req: Request, res: Response) {
 
     const calificaciones = await findCalificacionesByMateriaForDocente(
       docenteId,
-      materiaId
+      materiaId,
     );
 
     if (calificaciones === null) {
@@ -177,6 +178,27 @@ export async function updateCalificacion(req: Request, res: Response) {
     return res.json({ ok: true });
   } catch (error) {
     console.error('Error en updateCalificacion:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function getDashboardResumenDocente(req: Request, res: Response) {
+  try {
+    const docenteId = (req as AuthedRequest).user.id;
+    const resumen = await findDashboardResumenByDocenteUserId(docenteId);
+
+    if (!resumen) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Docente no encontrado',
+      });
+    }
+
+    return res.json({ ok: true, resumen });
+  } catch (error) {
+    console.error('Error en getDashboardResumenDocente:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

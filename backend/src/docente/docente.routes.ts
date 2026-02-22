@@ -6,37 +6,45 @@ import {
   getInscriptosByMateria,
   createCalificacion,
   updateCalificacion,
+  getDashboardResumenDocente,
 } from './docente.controller';
 import { requireRole } from '../auth/require-role.middleware';
 
 const router = Router();
 
 router.get(
+  '/dashboard/resumen',
+  authMiddleware,
+  requireRole([Roles.DOCENTE]),
+  getDashboardResumenDocente,
+);
+
+router.get(
   '/mis-materias',
   authMiddleware,
   requireRole([Roles.DOCENTE]),
-  getMisMateriasDocente
+  getMisMateriasDocente,
 );
 
 router.get(
   '/materias/:materiaId/inscriptos',
   authMiddleware,
   requireRole([Roles.DOCENTE]),
-  getInscriptosByMateria
+  getInscriptosByMateria,
 );
 
 router.post(
   '/materias/:materiaId/calificaciones',
   authMiddleware,
   requireRole([Roles.DOCENTE]),
-  createCalificacion
+  createCalificacion,
 );
 
 router.patch(
   '/calificaciones/:calificacionId',
   authMiddleware,
   requireRole([Roles.DOCENTE]),
-  updateCalificacion
+  updateCalificacion,
 );
 
 export default router;
