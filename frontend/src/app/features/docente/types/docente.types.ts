@@ -76,3 +76,23 @@ export interface UpdateCalificacionBody {
 export interface UpdateCalificacionResponse {
   ok: boolean;
 }
+
+export interface DocenteDashboardResumen {
+  institucion: {
+    id: number;
+    nombre: string;
+  } | null;
+  materias: {
+    total: number;
+    carreras: number;
+  };
+  alumnos: {
+    unicos_inscriptos: number;
+    inscripciones_aceptadas: number;
+  };
+}
+
+export interface DocenteDashboardResumenResponse {
+  ok: boolean;
+  resumen: DocenteDashboardResumen;
+}

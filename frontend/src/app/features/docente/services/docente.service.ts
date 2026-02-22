@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   CreateCalificacionBody,
   CreateCalificacionResponse,
+  DocenteDashboardResumenResponse,
   DocenteInscriptosResponse,
   DocenteMisMateriasResponse,
   UpdateCalificacionBody,
@@ -18,6 +19,12 @@ export class DocenteService {
   getMisMaterias(): Observable<DocenteMisMateriasResponse> {
     return this.http.get<DocenteMisMateriasResponse>(
       `${this.baseUrl}/mis-materias`
+    );
+  }
+
+  getDashboardResumen(): Observable<DocenteDashboardResumenResponse> {
+    return this.http.get<DocenteDashboardResumenResponse>(
+      `${this.baseUrl}/dashboard/resumen`
     );
   }
 
