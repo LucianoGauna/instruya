@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import {
   createAdminEnInstitucion,
   createInstitucionConAdmin,
+  findAdminsByInstitucion,
   findInstituciones,
   setInstitucionActiva,
   updateInstitucion,
@@ -228,6 +229,29 @@ export async function postCrearAdminEnInstitucion(
     return res.status(201).json({ ok: true, ...result });
   } catch (error) {
     console.error('Error en postCrearAdminEnInstitucion:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
+
+export async function getAdminsByInstitucion(req: Request, res: Response) {
+  const institucionId = Number(req.params.id);
+  if (!Number.isFinite(institucionId)) {
+    return res.status(400).json({ ok: false, message: 'id inválido' });
+  }
+
+  try {
+    const admins = await findAdminsByInstitucion(institucionId);
+    if (admins === null) {
+      return res
+        .status(404)
+        .json({ ok: false, message: 'Institución no encontrada' });
+    }
+
+    return res.json({ ok: true, admins });
+  } catch (error) {
+    console.error('Error en getAdminsByInstitucion:', error);
     return res
       .status(500)
       .json({ ok: false, message: 'Error interno en el servidor' });

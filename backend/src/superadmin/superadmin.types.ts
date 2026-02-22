@@ -51,3 +51,12 @@ export type CreateAdminEnInstitucionResult =
         activo: 1;
       };
     };
+
+export interface AdminDeInstitucion {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  activo: 0 | 1;
+  created_at: string;
+}

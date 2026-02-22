@@ -9,6 +9,7 @@ import {
   patchActivarInstitucion,
   patchDesactivarInstitucion,
   postCrearAdminEnInstitucion,
+  getAdminsByInstitucion,
 } from './superadmin.controller';
 
 const router = Router();
@@ -53,6 +54,13 @@ router.post(
   authMiddleware,
   requireRole([Roles.SUPERADMIN]),
   postCrearAdminEnInstitucion,
+);
+
+router.get(
+  '/instituciones/:id/admins',
+  authMiddleware,
+  requireRole([Roles.SUPERADMIN]),
+  getAdminsByInstitucion,
 );
 
 export default router;

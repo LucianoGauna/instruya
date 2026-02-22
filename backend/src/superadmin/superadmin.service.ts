@@ -1,6 +1,7 @@
 import { pool } from '../db';
 import bcrypt from 'bcrypt';
 import type {
+  AdminDeInstitucion,
   CreateAdminEnInstitucionResult,
   CreateInstitucionResult,
 } from './superadmin.types';
@@ -152,7 +153,7 @@ export async function createAdminEnInstitucion(params: {
 
   const [instRows]: any[] = await pool.query(
     `SELECT id, activa FROM institucion WHERE id = ? LIMIT 1;`,
-    [institucionId]
+    [institucionId],
   );
 
   if (!instRows || instRows.length === 0) return 'INSTITUCION_NOT_FOUND';
@@ -164,7 +165,7 @@ export async function createAdminEnInstitucion(params: {
     const [result]: any[] = await pool.query(
       `INSERT INTO usuario (nombre, apellido, email, contrasenia_hash, rol, institucion_id, activo)
        VALUES (?, ?, ?, ?, 'ADMIN', ?, 1);`,
-      [nombre, apellido, email, hash, institucionId]
+      [nombre, apellido, email, hash, institucionId],
     );
 
     return {
@@ -182,4 +183,44 @@ export async function createAdminEnInstitucion(params: {
     if (e?.code === 'ER_DUP_ENTRY') return 'ADMIN_EMAIL_DUP';
     throw e;
   }
+}
+
+export async function findAdminsByInstitucion(institucionId: number) {
+  const [instRows]: any[] = await pool.query(
+    `SELECT id FROM institucion WHERE id = ? LIMIT 1;`,
+    [institucionId],
+  );
+
+  if (!instRows || instRows.length === 0) return null;
+
+  const [rows]: any[] = await pool.query(
+    `
+    SELECT
+      u.id,
+      u.nombre,
+      u.apellido,
+      u.email,
+      u.activo,
+      u.created_at
+    FROM usuario u
+    WHERE u.institucion_id = ?
+      AND u.rol = 'ADMIN'
+    ORDER BY u.apellido, u.nombre;
+    `,
+    [institucionId],
+  );
+
+  return (rows ?? []).map(
+    (r: any): AdminDeInstitucion => ({
+      id: Number(r.id),
+      nombre: String(r.nombre),
+      apellido: String(r.apellido),
+      email: String(r.email),
+      activo: Number(r.activo) === 1 ? 1 : 0,
+      created_at:
+        r.created_at instanceof Date
+          ? r.created_at.toISOString()
+          : String(r.created_at),
+    }),
+  );
 }
