@@ -9,15 +9,15 @@
       styleClass="!w-5 hover:!bg-transparent !border-none"
       (onClick)="goBack()"
     ></p-button>
-    
-    <h1 class="text-lg sm:text-xl md:text-3xl font-lato font-semibold ">
+
+    <h1 class="text-lg sm:text-xl md:text-3xl font-lato font-semibold">
       Materias – {{ carreraNombre() ?? "Carrera #" + carreraId() }}
     </h1>
   </div>
-  
+
   <div class="rounded-lg border p-4 mb-6">
     <div class="font-medium mb-3">Crear materia</div>
-  
+
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
       <input
         pInputText
@@ -27,7 +27,7 @@
         [ngModel]="nuevoNombre()"
         (ngModelChange)="nuevoNombre.set($event)"
       />
-  
+
       <p-dropdown
         class="w-full sm:w-96"
         placeholder="Seleccionar docente"
@@ -37,7 +37,7 @@
         [ngModel]="docenteSeleccionadoId()"
         (ngModelChange)="docenteSeleccionadoId.set($event)"
       ></p-dropdown>
-  
+
       <p-button
         label="Crear"
         icon="pi pi-plus"
@@ -46,7 +46,7 @@
       ></p-button>
     </div>
   </div>
-  
+
   @if (loading()) {
     <p>Cargando...</p>
   } @else if (error()) {
@@ -57,7 +57,9 @@
     } @else {
       <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
         @for (m of materias(); track m.materia_id) {
-          <div class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between">
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between"
+          >
             <div class="flex-1">
               @if (editingId() === m.materia_id) {
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -69,8 +71,9 @@
                     [ngModel]="editNombre()"
                     (ngModelChange)="editNombre.set($event)"
                   />
-  
+
                   <p-dropdown
+                    appendTo="body"
                     class="w-full sm:w-96"
                     placeholder="Seleccionar docente"
                     optionLabel="label"
@@ -79,7 +82,7 @@
                     [ngModel]="editDocenteId()"
                     (ngModelChange)="editDocenteId.set($event)"
                   ></p-dropdown>
-  
+
                   <div class="flex items-center gap-2">
                     <p-button
                       text
@@ -93,7 +96,7 @@
                       [disabled]="updatingId() === m.materia_id"
                       (onClick)="saveEdit(m)"
                     ></p-button>
-  
+
                     <p-button
                       text
                       rounded
@@ -120,7 +123,7 @@
                 </div>
               }
             </div>
-  
+
             <div class="flex items-center gap-2">
               @if (editingId() !== m.materia_id) {
                 <p-button
@@ -135,7 +138,7 @@
                   [disabled]="updatingId() === m.materia_id"
                   (onClick)="startEdit(m)"
                 ></p-button>
-  
+
                 @if (isActiva(m)) {
                   <p-button
                     text
