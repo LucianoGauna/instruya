@@ -31,6 +31,26 @@ interface CrearInstitucionResponse {
   };
 }
 
+export interface CreateAdminEnInstitucionPayload {
+  nombre: string;
+  apellido: string;
+  email: string;
+  contrasenia: string;
+}
+
+export interface CreateAdminEnInstitucionResponse {
+  ok: boolean;
+  admin: {
+    id: number;
+    nombre: string;
+    apellido: string;
+    email: string;
+    rol: 'ADMIN';
+    institucion_id: number;
+    activo: 1;
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class SuperadminInstitucionesService {
   private http = inject(HttpClient);
@@ -70,6 +90,16 @@ export class SuperadminInstitucionesService {
     return this.http.patch<{ ok: boolean }>(
       `${this.apiUrl}/${id}/desactivar`,
       {},
+    );
+  }
+
+  createAdminEnInstitucion(
+    id: number,
+    payload: CreateAdminEnInstitucionPayload,
+  ) {
+    return this.http.post<CreateAdminEnInstitucionResponse>(
+      `${this.apiUrl}/${id}/admins`,
+      payload,
     );
   }
 }

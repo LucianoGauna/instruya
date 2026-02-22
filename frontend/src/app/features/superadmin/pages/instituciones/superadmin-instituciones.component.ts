@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import {
   Institucion,
@@ -24,6 +25,7 @@ import {
     CommonModule,
     FormsModule,
     ButtonModule,
+    DialogModule,
     InputTextModule,
     ToastModule,
   ],
@@ -55,6 +57,14 @@ export class SuperadminInstitucionesComponent {
   editNombre = signal('');
   editEmail = signal('');
   editDireccion = signal('');
+
+  adminDialogVisible = signal(false);
+  adminTargetInstitucion = signal<Institucion | null>(null);
+  creatingAdmin = signal(false);
+  newAdminNombre = signal('');
+  newAdminApellido = signal('');
+  newAdminEmail = signal('');
+  newAdminPass = signal('');
 
   ngOnInit() {
     this.loadInstituciones();
@@ -256,6 +266,105 @@ export class SuperadminInstitucionesComponent {
             severity: 'error',
             summary: 'Error',
             detail: 'No se pudo desactivar',
+            life: 3500,
+          });
+        },
+      });
+  }
+
+  openAdminDialog(i: Institucion) {
+    this.adminTargetInstitucion.set(i);
+    this.newAdminNombre.set('');
+    this.newAdminApellido.set('');
+    this.newAdminEmail.set('');
+    this.newAdminPass.set('');
+    this.adminDialogVisible.set(true);
+  }
+
+  closeAdminDialog() {
+    this.adminDialogVisible.set(false);
+    this.adminTargetInstitucion.set(null);
+    this.creatingAdmin.set(false);
+    this.newAdminNombre.set('');
+    this.newAdminApellido.set('');
+    this.newAdminEmail.set('');
+    this.newAdminPass.set('');
+  }
+
+  createAdmin() {
+    const target = this.adminTargetInstitucion();
+    if (!target) return;
+
+    if (!this.isActiva(target)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Institución inactiva',
+        detail: 'Activá la institución antes de crear admins',
+        life: 3000,
+      });
+      return;
+    }
+
+    const nombre = this.newAdminNombre().trim();
+    const apellido = this.newAdminApellido().trim();
+    const email = this.newAdminEmail().trim();
+    const contrasenia = this.newAdminPass();
+
+    if (!nombre || !apellido || !email || !contrasenia) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Faltan datos',
+        detail: 'Completá nombre, apellido, email y contraseña',
+        life: 3000,
+      });
+      return;
+    }
+
+    if (contrasenia.length < 6) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Contraseña inválida',
+        detail: 'Debe tener al menos 6 caracteres',
+        life: 3000,
+      });
+      return;
+    }
+
+    this.creatingAdmin.set(true);
+
+    this.service
+      .createAdminEnInstitucion(target.id, {
+        nombre,
+        apellido,
+        email,
+        contrasenia,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.creatingAdmin.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Administrador creado',
+            detail: `Se creó el admin para ${target.nombre}`,
+            life: 3000,
+          });
+          this.closeAdminDialog();
+        },
+        error: (err) => {
+          this.creatingAdmin.set(false);
+          const detail =
+            err?.status === 409
+              ? err?.error?.message ?? 'Email duplicado o institución inactiva'
+              : err?.status === 404
+                ? 'Institución no encontrada'
+                : err?.status === 400
+                  ? err?.error?.message ?? 'Datos inválidos'
+                  : 'No se pudo crear el administrador';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail,
             life: 3500,
           });
         },

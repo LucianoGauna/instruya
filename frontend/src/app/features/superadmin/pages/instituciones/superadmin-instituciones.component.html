@@ -2,10 +2,10 @@
 
 <div class="flex flex-col gap-5">
   <h1 class="text-2xl sm:text-4xl font-lato font-semibold">Instituciones</h1>
-  
+
   <div class="rounded-2xl bg-gray-50 shadow-md p-4 mb-6">
     <div class="font-medium mb-3">Crear institución + admin</div>
-  
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <input
         pInputText
@@ -58,7 +58,7 @@
         (ngModelChange)="adminPass.set($event)"
       />
     </div>
-  
+
     <div class="mt-4 w-full flex justify-end">
       <p-button
         label="Crear"
@@ -69,7 +69,7 @@
       ></p-button>
     </div>
   </div>
-  
+
   @if (loading()) {
     <p>Cargando...</p>
   } @else if (error()) {
@@ -120,7 +120,7 @@
                 </div>
               }
             </div>
-  
+
             <div class="flex items-center gap-2">
               @if (editingId() === i.id) {
                 <p-button
@@ -140,6 +140,15 @@
                   (onClick)="cancelEdit()"
                 ></p-button>
               } @else {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-user-plus"
+                  severity="info"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="openAdminDialog(i)"
+                ></p-button>
                 <p-button
                   text
                   rounded
@@ -177,4 +186,74 @@
       </div>
     }
   }
+
+  <p-dialog
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [closable]="!creatingAdmin()"
+    [visible]="adminDialogVisible()"
+    [style]="{ width: '32rem', maxWidth: '95vw' }"
+    (visibleChange)="adminDialogVisible.set($event)"
+    (onHide)="closeAdminDialog()"
+  >
+    <ng-template pTemplate="header">
+      <p class="font-lato text-2xl font-bold">Crear admininistrador</p>
+    </ng-template>
+    @if (adminTargetInstitucion()) {
+      <div class="mb-3 text-sm text-gray-700">
+        Institución:
+        <span class="font-bold">{{ adminTargetInstitucion()!.nombre }}</span>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 gap-3">
+      <input
+        pInputText
+        type="text"
+        placeholder="Nombre"
+        [ngModel]="newAdminNombre()"
+        (ngModelChange)="newAdminNombre.set($event)"
+      />
+      <input
+        pInputText
+        type="text"
+        placeholder="Apellido"
+        [ngModel]="newAdminApellido()"
+        (ngModelChange)="newAdminApellido.set($event)"
+      />
+      <input
+        pInputText
+        type="email"
+        placeholder="Email"
+        [ngModel]="newAdminEmail()"
+        (ngModelChange)="newAdminEmail.set($event)"
+      />
+      <input
+        pInputText
+        type="password"
+        placeholder="Contraseña (mínimo 6 caracteres)"
+        [ngModel]="newAdminPass()"
+        (ngModelChange)="newAdminPass.set($event)"
+      />
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end gap-2">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          [disabled]="creatingAdmin()"
+          (onClick)="closeAdminDialog()"
+        ></p-button>
+        <p-button
+          label="Crear admin"
+          icon="pi pi-check"
+          [loading]="creatingAdmin()"
+          [disabled]="creatingAdmin()"
+          (onClick)="createAdmin()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
 </div>
