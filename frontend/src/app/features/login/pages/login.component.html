@@ -24,9 +24,9 @@
 
           <div class="flex items-center gap-4 justify-center lg:justify-start">
             <form
+              class="w-full flex flex-col gap-3"
               [formGroup]="form"
               (ngSubmit)="submit()"
-              class="w-full flex flex-col gap-3"
             >
               <h2 class="text-2xl font-bold">Iniciar sesión</h2>
 
@@ -38,13 +38,14 @@
                   formControlName="email"
                   class="w-full"
                 />
-                @if ((form.get('email')?.invalid) &&
-                (form.get('email')?.touched)) {
-                <small class="text-red-600">
-                  @if (form.get('email')?.errors?.['required']) { El email es
-                  requerido. } @else if (form.get('email')?.errors?.['email']) {
-                  Formato de email inválido. }
-                </small>
+                @if (form.get("email")?.invalid && form.get("email")?.touched) {
+                  <small class="text-red-600">
+                    @if (form.get("email")?.errors?.["required"]) {
+                      El email es requerido.
+                    } @else if (form.get("email")?.errors?.["email"]) {
+                      Formato de email inválido.
+                    }
+                  </small>
                 }
               </div>
 
@@ -56,9 +57,12 @@
                   formControlName="password"
                   class="w-full"
                 />
-                @if (form.get('password')?.invalid &&
-                form.get('password')?.touched) {
-                <small class="text-red-600">La contraseña es requerida.</small>
+                @if (
+                  form.get("password")?.invalid && form.get("password")?.touched
+                ) {
+                  <small class="text-red-600"
+                    >La contraseña es requerida.</small
+                  >
                 }
               </div>
 

@@ -1,5 +1,5 @@
 <div
-  class="fixed left-0 top-17 h-[calc(100vh-4rem)] bg-[#0F172A] text-white overflow-hidden duration-300 z-100"
+  class="fixed left-0 top-17 h-[calc(100vh-4rem)] bg-white text-[#0a0a0a] overflow-hidden duration-300 z-100 shadow-sm"
   [class.w-full]="open()"
   [class.w-0]="!open()"
   [class.sm:w-64]="open()"
@@ -8,7 +8,7 @@
   <ul class="space-y-2 px-4 mt-6">
     @for (item of menuItems(); track item.label) {
     <li
-      class="flex items-center space-x-3 p-2 rounded hover:bg-blue-900 cursor-pointer duration-200"
+      class="flex items-center space-x-3 p-2 rounded hover:bg-neutral-100 cursor-pointer duration-200"
       (click)="navigate(item.route)"
     >
       <i class="{{ item.icon }} text-lg"></i>
