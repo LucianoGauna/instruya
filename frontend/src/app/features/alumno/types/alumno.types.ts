@@ -39,3 +39,20 @@ export type EstadoFiltro =
   | 'ACEPTADA'
   | 'RECHAZADA'
   | 'BAJA';
+
+export interface AlumnoDashboardResumen {
+  institucion: {
+    id: number;
+    nombre: string;
+  } | null;
+  carrera: {
+    id: number;
+    nombre: string;
+  } | null;
+  materias: {
+    aceptadas: number;
+    aprobadas: number;
+    desaprobadas: number;
+  };
+  promedio_final: number | null;
+}

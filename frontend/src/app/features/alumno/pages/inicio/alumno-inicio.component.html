@@ -1,33 +1,86 @@
-<div class="flex flex-col gap-4">
-  <h1 class="text-2xl sm:text-4xl font-lato font-semibold">Inicio Alumno</h1>
+<div class="flex flex-col gap-5">
+  <h1 class="text-2xl sm:text-4xl font-lato font-semibold">Dashboard Alumno</h1>
 
-  <p class="text-gray-600">
-    Bienvenido. Desde acá podés acceder a tus materias.
-  </p>
+  @if (loading()) {
+    <p>Cargando resumen...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else if (!resumen()) {
+    <p>No hay datos disponibles.</p>
+  } @else {
+    <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+      <p class="text-gray-700">
+        Bienvenido
+        @if (user()) {
+          <span class="font-semibold">{{ user()!.email }}</span>
+        }
+        .
+      </p>
+      <p class="text-gray-700 mt-1">
+        Institución:
+        <span class="font-semibold">
+          {{ resumen()!.institucion?.nombre ?? "Sin institución" }}
+        </span>
+      </p>
+      <p class="text-gray-700 mt-1">
+        Carrera:
+        <span class="font-semibold">
+          {{ resumen()!.carrera?.nombre ?? "Sin carrera" }}
+        </span>
+      </p>
+    </div>
 
-  <div class="flex flex-col gap-3">
-    <p-button
-      text
-      raised
-      label="Ver catalogo de materias"
-      icon="pi pi-list"
-      (onClick)="goToCatalogo()"
-    ></p-button>
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias (aceptadas)</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.aceptadas }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Promedio actual (finales)</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.promedio_final ?? "-" }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias aprobadas</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.aprobadas }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias desaprobadas</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.desaprobadas }}
+        </div>
+      </div>
+    </div>
 
-    <p-button
-      text
-      raised
-      label="Ver mis materias"
-      icon="pi pi-book"
-      (onClick)="goToMisMaterias()"
-    ></p-button>
+    <div class="flex flex-col gap-3">
+      <p-button
+        text
+        raised
+        label="Ver catalogo de materias"
+        icon="pi pi-list"
+        (onClick)="goToCatalogo()"
+      ></p-button>
 
-    <p-button
-      text
-      raised
-      label="Ver mis calificaciones"
-      icon="pi pi-star"
-      (onClick)="goToMisCalificaciones()"
-    ></p-button>
-  </div>
+      <p-button
+        text
+        raised
+        label="Ver mis materias"
+        icon="pi pi-book"
+        (onClick)="goToMisMaterias()"
+      ></p-button>
+
+      <p-button
+        text
+        raised
+        label="Ver mis calificaciones"
+        icon="pi pi-star"
+        (onClick)="goToMisCalificaciones()"
+      ></p-button>
+    </div>
+  }
 </div>

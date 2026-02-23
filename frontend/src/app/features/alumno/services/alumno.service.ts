@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type {
+  AlumnoDashboardResumen,
   CatalogoCarrera,
   CatalogoMateria,
   MiMateria,
@@ -26,6 +27,11 @@ interface SolicitarInscripcionResponse {
   };
 }
 
+interface DashboardResumenResponse {
+  ok: boolean;
+  resumen: AlumnoDashboardResumen;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AlumnoService {
   private http = inject(HttpClient);
@@ -39,12 +45,18 @@ export class AlumnoService {
     return this.http.get<CatalogoMateriasResponse>(`${this.baseUrl}/materias`);
   }
 
+  getDashboardResumen(): Observable<DashboardResumenResponse> {
+    return this.http.get<DashboardResumenResponse>(
+      `${this.baseUrl}/dashboard/resumen`,
+    );
+  }
+
   solicitarInscripcion(
-    materiaId: number
+    materiaId: number,
   ): Observable<SolicitarInscripcionResponse> {
     return this.http.post<SolicitarInscripcionResponse>(
       `${this.baseUrl}/materias/${materiaId}/inscribirse`,
-      {}
+      {},
     );
   }
 }
