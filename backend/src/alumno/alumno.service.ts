@@ -219,37 +219,28 @@ export async function findDashboardResumenByAlumnoUserId(alumnoId: number) {
     [alumnoId],
   );
 
-  const [promedioRows]: any[] = await pool.query(
-    `
-    SELECT AVG(CAST(nota AS DECIMAL(10,2))) AS promedio
-    FROM calificacion
-    WHERE alumno_id = ?
-      AND tipo = 'FINAL';
-    `,
-    [alumnoId],
-  );
-
-  const [finalesPorMateriaRows]: any[] = await pool.query(
+  const [notaMateriaPorMateriaRows]: any[] = await pool.query(
     `
     SELECT
-      COUNT(*) AS materias_con_final,
-      SUM(CASE WHEN t.best_final >= 6 THEN 1 ELSE 0 END) AS aprobadas,
-      SUM(CASE WHEN t.best_final < 6 THEN 1 ELSE 0 END) AS desaprobadas
+      COUNT(*) AS materias_con_nota_materia,
+      AVG(t.best_nota_materia) AS promedio,
+      SUM(CASE WHEN t.best_nota_materia >= 6 THEN 1 ELSE 0 END) AS aprobadas,
+      SUM(CASE WHEN t.best_nota_materia < 6 THEN 1 ELSE 0 END) AS desaprobadas
     FROM (
       SELECT
         c.materia_id,
-        MAX(CAST(c.nota AS DECIMAL(10,2))) AS best_final
+        MAX(CAST(c.nota AS DECIMAL(10,2))) AS best_nota_materia
       FROM calificacion c
       WHERE c.alumno_id = ?
-        AND c.tipo = 'FINAL'
+        AND c.tipo = 'NOTA_MATERIA'
       GROUP BY c.materia_id
     ) t;
     `,
     [alumnoId],
   );
 
-  const promedioRaw = promedioRows?.[0]?.promedio;
-  const promedioFinal =
+  const promedioRaw = notaMateriaPorMateriaRows?.[0]?.promedio;
+  const promedioNotaMateria =
     promedioRaw === null || promedioRaw === undefined
       ? null
       : Number(Number(promedioRaw).toFixed(2));
@@ -269,9 +260,9 @@ export async function findDashboardResumenByAlumnoUserId(alumnoId: number) {
       : null,
     materias: {
       aceptadas: Number(aceptadasRows?.[0]?.total ?? 0),
-      aprobadas: Number(finalesPorMateriaRows?.[0]?.aprobadas ?? 0),
-      desaprobadas: Number(finalesPorMateriaRows?.[0]?.desaprobadas ?? 0),
+      aprobadas: Number(notaMateriaPorMateriaRows?.[0]?.aprobadas ?? 0),
+      desaprobadas: Number(notaMateriaPorMateriaRows?.[0]?.desaprobadas ?? 0),
     },
-    promedio_final: promedioFinal,
+    promedio_nota_materia: promedioNotaMateria,
   };
 }

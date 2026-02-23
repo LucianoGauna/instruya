@@ -137,20 +137,22 @@ export async function createCalificacionForDocente(
   );
   if (!insRows || insRows.length === 0) return 'ALUMNO_NO_INSCRIPTO';
 
-  if (tipo === 'FINAL') {
-    const [finalRows]: any[] = await pool.query(
+  if (tipo === 'FINAL' || tipo === 'NOTA_MATERIA') {
+    const [tipoRows]: any[] = await pool.query(
       `
       SELECT id
       FROM calificacion
       WHERE alumno_id = ?
         AND materia_id = ?
-        AND tipo = 'FINAL'
+        AND tipo = ?
       LIMIT 1;
       `,
-      [alumnoId, materiaId],
+      [alumnoId, materiaId, tipo],
     );
 
-    if (finalRows && finalRows.length > 0) return 'FINAL_YA_EXISTE';
+    if (tipoRows && tipoRows.length > 0) {
+      return tipo === 'FINAL' ? 'FINAL_YA_EXISTE' : 'NOTA_MATERIA_YA_EXISTE';
+    }
   }
 
   const [result]: any[] = await pool.query(

@@ -23,6 +23,7 @@ export type CreateCalificacionResult =
   | 'MATERIA_NOT_FOUND'
   | 'ALUMNO_NO_INSCRIPTO'
   | 'FINAL_YA_EXISTE'
+  | 'NOTA_MATERIA_YA_EXISTE'
   | {
       id: number;
       alumno_id: number;

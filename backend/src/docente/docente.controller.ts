@@ -131,6 +131,13 @@ export async function createCalificacion(req: Request, res: Response) {
         message: 'Ya existe una calificación FINAL para ese alumno en la materia',
       });
     }
+    if (result === 'NOTA_MATERIA_YA_EXISTE') {
+      return res.status(409).json({
+        ok: false,
+        message:
+          'Ya existe una calificación NOTA_MATERIA para ese alumno en la materia',
+      });
+    }
 
     return res.status(201).json({ ok: true, calificacion: result });
   } catch (error) {
