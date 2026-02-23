@@ -54,5 +54,5 @@ export interface AlumnoDashboardResumen {
     aprobadas: number;
     desaprobadas: number;
   };
-  promedio_final: number | null;
+  promedio_nota_materia: number | null;
 }

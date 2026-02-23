@@ -100,13 +100,19 @@ export class DocenteInscriptosComponent {
   openCreateDialog(alumno: Inscripto) {
     this.selectedAlumno.set(alumno);
     const yaTieneFinal = alumno.calificaciones?.some((c) => c.tipo === 'FINAL');
-    this.tiposCalificacionDisponibles.set(
-      yaTieneFinal
-        ? TIPOS_CALIFICACION_OPTIONS.filter((t) => t.value !== 'FINAL')
-        : TIPOS_CALIFICACION_OPTIONS,
+    const yaTieneNotaMateria = alumno.calificaciones?.some(
+      (c) => c.tipo === 'NOTA_MATERIA',
     );
 
-    const tipoDefault = yaTieneFinal ? 'PARCIAL' : 'PARCIAL';
+    this.tiposCalificacionDisponibles.set(
+      TIPOS_CALIFICACION_OPTIONS.filter((t) => {
+        if (t.value === 'FINAL' && yaTieneFinal) return false;
+        if (t.value === 'NOTA_MATERIA' && yaTieneNotaMateria) return false;
+        return true;
+      }),
+    );
+
+    const tipoDefault = 'PARCIAL';
     this.calificacionForm.reset({
       tipo: tipoDefault,
       nota: null,
@@ -210,7 +216,8 @@ export class DocenteInscriptosComponent {
           err?.status === 400
             ? 'Datos inválidos (revisá tipo/nota/fecha)'
             : err?.status === 409
-              ? 'Ya existe un FINAL para este alumno en esta materia'
+              ? err?.error?.message ??
+                'Ya existe un FINAL/NOTA_MATERIA para este alumno en esta materia'
               : err?.status === 404
                 ? 'No encontrado'
                 : 'No se pudo guardar la calificación';

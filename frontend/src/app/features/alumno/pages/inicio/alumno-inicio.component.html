@@ -38,9 +38,9 @@
         </div>
       </div>
       <div class="rounded-2xl bg-gray-50 shadow-md p-4">
-        <div class="text-sm text-gray-600">Promedio actual (finales)</div>
+        <div class="text-sm text-gray-600">Promedio actual (nota materia)</div>
         <div class="text-3xl font-semibold">
-          {{ resumen()!.promedio_final ?? "-" }}
+          {{ resumen()!.promedio_nota_materia ?? "-" }}
         </div>
       </div>
       <div class="rounded-2xl bg-gray-50 shadow-md p-4">
@@ -57,26 +57,20 @@
       </div>
     </div>
 
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col justify-end md:flex-row gap-3">
       <p-button
-        text
-        raised
         label="Ver catalogo de materias"
         icon="pi pi-list"
         (onClick)="goToCatalogo()"
       ></p-button>
 
       <p-button
-        text
-        raised
         label="Ver mis materias"
         icon="pi pi-book"
         (onClick)="goToMisMaterias()"
       ></p-button>
 
       <p-button
-        text
-        raised
         label="Ver mis calificaciones"
         icon="pi pi-star"
         (onClick)="goToMisCalificaciones()"
