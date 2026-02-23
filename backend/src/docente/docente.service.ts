@@ -137,6 +137,22 @@ export async function createCalificacionForDocente(
   );
   if (!insRows || insRows.length === 0) return 'ALUMNO_NO_INSCRIPTO';
 
+  if (tipo === 'FINAL') {
+    const [finalRows]: any[] = await pool.query(
+      `
+      SELECT id
+      FROM calificacion
+      WHERE alumno_id = ?
+        AND materia_id = ?
+        AND tipo = 'FINAL'
+      LIMIT 1;
+      `,
+      [alumnoId, materiaId],
+    );
+
+    if (finalRows && finalRows.length > 0) return 'FINAL_YA_EXISTE';
+  }
+
   const [result]: any[] = await pool.query(
     `
     INSERT INTO calificacion (alumno_id, materia_id, tipo, fecha, nota, descripcion, docente_id)
