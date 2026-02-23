@@ -1,11 +1,33 @@
 import type { Request, Response } from 'express';
 import type { AuthedRequest } from '../auth/auth.types';
 import {
+  findDashboardResumenByAlumnoUserId,
   findCatalogoMaterias,
   findMisCalificaciones,
   findMisMaterias,
   solicitarInscripcion,
 } from './alumno.service';
+
+export async function getDashboardResumenAlumno(req: Request, res: Response) {
+  try {
+    const alumnoId = (req as AuthedRequest).user.id;
+    const resumen = await findDashboardResumenByAlumnoUserId(alumnoId);
+
+    if (!resumen) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Alumno no encontrado',
+      });
+    }
+
+    return res.json({ ok: true, resumen });
+  } catch (error) {
+    console.error('Error en getDashboardResumenAlumno:', error);
+    return res
+      .status(500)
+      .json({ ok: false, message: 'Error interno en el servidor' });
+  }
+}
 
 export async function getMisMaterias(req: Request, res: Response) {
   try {
@@ -76,12 +98,10 @@ export async function postSolicitarInscripcion(req: Request, res: Response) {
         .json({ ok: false, message: 'Materia no encontrada' });
     }
     if (result === 'YA_INSCRIPTO') {
-      return res
-        .status(409)
-        .json({
-          ok: false,
-          message: 'Ya tenés una inscripción para esa materia',
-        });
+      return res.status(409).json({
+        ok: false,
+        message: 'Ya tenés una inscripción para esa materia',
+      });
     }
 
     return res.status(201).json({ ok: true, inscripcion: result });

@@ -3,6 +3,7 @@ import { authMiddleware } from '../auth/auth.middleware';
 import { requireRole } from '../auth/require-role.middleware';
 import { Roles } from '../auth/auth.types';
 import {
+  getDashboardResumenAlumno,
   getMisMaterias,
   getMisCalificaciones,
   getCatalogoMaterias,
@@ -12,31 +13,38 @@ import {
 const router = Router();
 
 router.get(
+  '/dashboard/resumen',
+  authMiddleware,
+  requireRole([Roles.ALUMNO]),
+  getDashboardResumenAlumno,
+);
+
+router.get(
   '/mis-materias',
   authMiddleware,
   requireRole([Roles.ALUMNO]),
-  getMisMaterias
+  getMisMaterias,
 );
 
 router.get(
   '/mis-calificaciones',
   authMiddleware,
   requireRole([Roles.ALUMNO]),
-  getMisCalificaciones
+  getMisCalificaciones,
 );
 
 router.get(
   '/materias',
   authMiddleware,
   requireRole([Roles.ALUMNO]),
-  getCatalogoMaterias
+  getCatalogoMaterias,
 );
 
 router.post(
   '/materias/:materiaId/inscribirse',
   authMiddleware,
   requireRole([Roles.ALUMNO]),
-  postSolicitarInscripcion
+  postSolicitarInscripcion,
 );
 
 export default router;

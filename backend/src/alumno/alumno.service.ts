@@ -186,3 +186,92 @@ export async function solicitarInscripcion(params: {
 
   return { inscripcion_id: Number(result.insertId), estado: 'PENDIENTE' };
 }
+
+export async function findDashboardResumenByAlumnoUserId(alumnoId: number) {
+  const [userRows]: any[] = await pool.query(
+    `
+    SELECT
+      u.id,
+      i.id AS institucion_id,
+      i.nombre AS institucion_nombre,
+      c.id AS carrera_id,
+      c.nombre AS carrera_nombre
+    FROM usuario u
+    LEFT JOIN alumno_perfil ap ON ap.usuario_id = u.id
+    LEFT JOIN carrera c ON c.id = ap.carrera_id
+    LEFT JOIN institucion i ON i.id = u.institucion_id
+    WHERE u.id = ?
+      AND u.rol = 'ALUMNO'
+    LIMIT 1;
+    `,
+    [alumnoId],
+  );
+
+  if (!userRows || userRows.length === 0) return null;
+
+  const [aceptadasRows]: any[] = await pool.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM inscripcion_materia
+    WHERE alumno_id = ?
+      AND estado = 'ACEPTADA';
+    `,
+    [alumnoId],
+  );
+
+  const [promedioRows]: any[] = await pool.query(
+    `
+    SELECT AVG(CAST(nota AS DECIMAL(10,2))) AS promedio
+    FROM calificacion
+    WHERE alumno_id = ?
+      AND tipo = 'FINAL';
+    `,
+    [alumnoId],
+  );
+
+  const [finalesPorMateriaRows]: any[] = await pool.query(
+    `
+    SELECT
+      COUNT(*) AS materias_con_final,
+      SUM(CASE WHEN t.best_final >= 6 THEN 1 ELSE 0 END) AS aprobadas,
+      SUM(CASE WHEN t.best_final < 6 THEN 1 ELSE 0 END) AS desaprobadas
+    FROM (
+      SELECT
+        c.materia_id,
+        MAX(CAST(c.nota AS DECIMAL(10,2))) AS best_final
+      FROM calificacion c
+      WHERE c.alumno_id = ?
+        AND c.tipo = 'FINAL'
+      GROUP BY c.materia_id
+    ) t;
+    `,
+    [alumnoId],
+  );
+
+  const promedioRaw = promedioRows?.[0]?.promedio;
+  const promedioFinal =
+    promedioRaw === null || promedioRaw === undefined
+      ? null
+      : Number(Number(promedioRaw).toFixed(2));
+
+  return {
+    institucion: userRows[0].institucion_id
+      ? {
+          id: Number(userRows[0].institucion_id),
+          nombre: String(userRows[0].institucion_nombre),
+        }
+      : null,
+    carrera: userRows[0].carrera_id
+      ? {
+          id: Number(userRows[0].carrera_id),
+          nombre: String(userRows[0].carrera_nombre),
+        }
+      : null,
+    materias: {
+      aceptadas: Number(aceptadasRows?.[0]?.total ?? 0),
+      aprobadas: Number(finalesPorMateriaRows?.[0]?.aprobadas ?? 0),
+      desaprobadas: Number(finalesPorMateriaRows?.[0]?.desaprobadas ?? 0),
+    },
+    promedio_final: promedioFinal,
+  };
+}
