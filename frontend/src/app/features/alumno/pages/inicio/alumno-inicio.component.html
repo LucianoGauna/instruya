@@ -55,7 +55,23 @@
           {{ resumen()!.materias.desaprobadas }}
         </div>
       </div>
+      <div class="rounded-2xl bg-gray-50 col-span-1 h-auto shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-3">Estado de materias</h2>
+        @if ((resumen()!.materias.aprobadas + resumen()!.materias.desaprobadas) === 0) {
+          <p class="text-gray-600">Todavía no tenés materias calificadas con nota materia.</p>
+        } @else {
+          <div class="w-full flex justify-center">
+            <p-chart
+              type="doughnut"
+              class="w-full h-full"
+              [data]="chartData"
+              [options]="chartOptions"
+            ></p-chart>
+          </div>
+        }
+      </div>
     </div>
+
 
     <div class="flex flex-col justify-end md:flex-row gap-3">
       <p-button
