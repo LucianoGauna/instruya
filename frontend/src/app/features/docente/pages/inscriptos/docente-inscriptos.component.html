@@ -109,10 +109,10 @@
       <label class="block mb-1">Tipo</label>
       <p-dropdown
         class="w-full"
-        [options]="tiposCalificacion"
         optionLabel="label"
         optionValue="value"
         formControlName="tipo"
+        [options]="tiposCalificacionDisponibles()"
       ></p-dropdown>
     </div>
 

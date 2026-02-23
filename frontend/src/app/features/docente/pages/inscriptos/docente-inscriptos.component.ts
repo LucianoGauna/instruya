@@ -54,6 +54,7 @@ export class DocenteInscriptosComponent {
   private messageService = inject(MessageService);
 
   tiposCalificacion = TIPOS_CALIFICACION_OPTIONS;
+  tiposCalificacionDisponibles = signal(TIPOS_CALIFICACION_OPTIONS);
 
   materiaId = signal<number | null>(null);
 
@@ -98,8 +99,16 @@ export class DocenteInscriptosComponent {
 
   openCreateDialog(alumno: Inscripto) {
     this.selectedAlumno.set(alumno);
+    const yaTieneFinal = alumno.calificaciones?.some((c) => c.tipo === 'FINAL');
+    this.tiposCalificacionDisponibles.set(
+      yaTieneFinal
+        ? TIPOS_CALIFICACION_OPTIONS.filter((t) => t.value !== 'FINAL')
+        : TIPOS_CALIFICACION_OPTIONS,
+    );
+
+    const tipoDefault = yaTieneFinal ? 'PARCIAL' : 'PARCIAL';
     this.calificacionForm.reset({
-      tipo: 'PARCIAL',
+      tipo: tipoDefault,
       nota: null,
       fecha: new Date(),
       descripcion: '',
@@ -110,6 +119,7 @@ export class DocenteInscriptosComponent {
   openEditDialog(alumno: Inscripto, cal: Calificacion) {
     this.selectedAlumno.set(alumno);
     this.editingCalificacion.set(cal);
+    this.tiposCalificacionDisponibles.set(TIPOS_CALIFICACION_OPTIONS);
 
     this.calificacionForm.reset({
       tipo: cal.tipo,
@@ -131,6 +141,7 @@ export class DocenteInscriptosComponent {
     this.dialogVisible.set(false);
     this.selectedAlumno.set(null);
     this.editingCalificacion.set(null);
+    this.tiposCalificacionDisponibles.set(TIPOS_CALIFICACION_OPTIONS);
   }
 
   saveCalificacion() {
@@ -198,9 +209,11 @@ export class DocenteInscriptosComponent {
         const msg =
           err?.status === 400
             ? 'Datos inválidos (revisá tipo/nota/fecha)'
-            : err?.status === 404
-            ? 'No encontrado'
-            : 'No se pudo guardar la calificación';
+            : err?.status === 409
+              ? 'Ya existe un FINAL para este alumno en esta materia'
+              : err?.status === 404
+                ? 'No encontrado'
+                : 'No se pudo guardar la calificación';
 
         this.messageService.add({
           severity: 'error',
