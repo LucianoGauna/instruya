@@ -45,7 +45,7 @@ export async function findMisCalificaciones(alumnoId: number) {
     INNER JOIN materia m ON m.id = cal.materia_id
     INNER JOIN usuario d ON d.id = cal.docente_id
     WHERE cal.alumno_id = ?
-    ORDER BY cal.fecha DESC, m.nombre;
+    ORDER BY m.nombre, cal.fecha DESC, cal.id DESC;
   `;
 
   const [rows] = await pool.query(query, [alumnoId]);
