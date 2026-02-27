@@ -149,9 +149,12 @@ export class AlumnoInicioComponent {
       this.cd.markForCheck();
       return;
     }
+    const fullLabels = finales.map((final) => final.materia_nombre);
 
     this.barData = {
-      labels: finales.map((final) => final.materia_nombre.substring(0, 10) + '...'),
+      labels: fullLabels.map((nombre) =>
+        nombre.length > 10 ? `${nombre.substring(0, 10)}...` : nombre,
+      ),
       datasets: [
         {
           label: 'Nota final',
@@ -169,7 +172,14 @@ export class AlumnoInicioComponent {
         legend: {
           labels: {
             color: textColor,
-            
+          },
+        },
+        tooltip: {
+          callbacks: {
+            title: (items: any[]) => {
+              const index = items?.[0]?.dataIndex ?? -1;
+              return fullLabels[index] ?? '';
+            },
           },
         },
       },
