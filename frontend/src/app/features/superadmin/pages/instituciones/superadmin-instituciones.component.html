@@ -146,6 +146,9 @@
                   size="small"
                   icon="pi pi-users"
                   severity="help"
+                  pTooltip="Ver admins"
+                  positionTop="-2"
+                  tooltipPosition="top"
                   [disabled]="updatingId() === i.id"
                   (onClick)="openViewAdminsDialog(i)"
                 ></p-button>
@@ -155,6 +158,9 @@
                   size="small"
                   icon="pi pi-user-plus"
                   severity="info"
+                  pTooltip="Crear admin"
+                  positionTop="-2"
+                  tooltipPosition="top"
                   [disabled]="updatingId() === i.id"
                   (onClick)="openAdminDialog(i)"
                 ></p-button>
@@ -164,6 +170,9 @@
                   size="small"
                   icon="pi pi-pencil"
                   severity="secondary"
+                  pTooltip="Editar"
+                  positionTop="-2"
+                  tooltipPosition="top"
                   [disabled]="updatingId() === i.id"
                   (onClick)="startEdit(i)"
                 ></p-button>
@@ -174,6 +183,9 @@
                     size="small"
                     icon="pi pi-eye-slash"
                     severity="danger"
+                    pTooltip="Descactivar"
+                    positionTop="-2"
+                    tooltipPosition="top"
                     [disabled]="updatingId() === i.id"
                     (onClick)="desactivar(i)"
                   ></p-button>
@@ -184,6 +196,9 @@
                     size="small"
                     icon="pi pi-eye"
                     severity="success"
+                    pTooltip="Activar"
+                    positionTop="-2"
+                    tooltipPosition="top"
                     [disabled]="updatingId() === i.id"
                     (onClick)="activar(i)"
                   ></p-button>
@@ -282,7 +297,9 @@
     @if (viewAdminsTargetInstitucion()) {
       <div class="mb-3 text-sm text-gray-700">
         Institución:
-        <span class="font-bold">{{ viewAdminsTargetInstitucion()!.nombre }}</span>
+        <span class="font-bold">{{
+          viewAdminsTargetInstitucion()!.nombre
+        }}</span>
       </div>
     }
 
