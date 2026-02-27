@@ -13,6 +13,10 @@ import type {
   CreateInstitucionBody,
 } from './superadmin.types';
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export async function postCrearInstitucionConAdmin(
   req: Request,
   res: Response,
@@ -44,6 +48,16 @@ export async function postCrearInstitucionConAdmin(
     return res
       .status(400)
       .json({ ok: false, message: 'Faltan campos requeridos' });
+  }
+  if (!isValidEmail(emailInst)) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'Email de institución inválido' });
+  }
+  if (!isValidEmail(adminEmail)) {
+    return res
+      .status(400)
+      .json({ ok: false, message: 'Email de administrador inválido' });
   }
 
   try {
@@ -106,6 +120,9 @@ export async function patchInstitucion(req: Request, res: Response) {
     return res
       .status(400)
       .json({ ok: false, message: 'nombre/email/direccion requeridos' });
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ ok: false, message: 'email inválido' });
+  }
 
   try {
     const updated = await updateInstitucion({ id, nombre, email, direccion });
@@ -188,6 +205,9 @@ export async function postCrearAdminEnInstitucion(req: Request, res: Response) {
     return res
       .status(400)
       .json({ ok: false, message: 'Faltan campos requeridos' });
+  }
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ ok: false, message: 'Email inválido' });
   }
 
   if (contrasenia.length < 6) {

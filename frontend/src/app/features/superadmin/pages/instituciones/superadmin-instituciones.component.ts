@@ -111,6 +111,25 @@ export class SuperadminInstitucionesComponent {
       return;
     }
 
+    if (!this.isValidEmail(email)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Ingresá un email válido para la institución',
+        life: 3000,
+      });
+      return;
+    }
+    if (!this.isValidEmail(aEmail)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Ingresá un email válido para el administrador',
+        life: 3000,
+      });
+      return;
+    }
+
     this.creating.set(true);
 
     this.service
@@ -182,6 +201,16 @@ export class SuperadminInstitucionesComponent {
         severity: 'warn',
         summary: 'Faltan datos',
         detail: 'Nombre, email y dirección son requeridos',
+        life: 3000,
+      });
+      return;
+    }
+
+    if (!this.isValidEmail(email)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Ingresá un email válido para la institución',
         life: 3000,
       });
       return;
@@ -325,6 +354,16 @@ export class SuperadminInstitucionesComponent {
         severity: 'warn',
         summary: 'Faltan datos',
         detail: 'Completá nombre, apellido, email y contraseña',
+        life: 3000,
+      });
+      return;
+    }
+
+    if (!this.isValidEmail(email)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Email inválido',
+        detail: 'Ingresá un email válido para el administrador',
         life: 3000,
       });
       return;
@@ -484,5 +523,9 @@ export class SuperadminInstitucionesComponent {
     this.adminApellido.set('');
     this.adminEmail.set('');
     this.adminPass.set('');
+  }
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 }
