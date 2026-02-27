@@ -16,6 +16,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { AlumnoService } from '../../services/alumno.service';
 import { AlumnoDashboardResumen } from '../../types/alumno.types';
 import { ChartModule } from 'primeng/chart';
+import { AlumnoCalificacionesService } from '../../services/alumno-calificaciones.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-alumno-inicio',
@@ -25,8 +27,8 @@ import { ChartModule } from 'primeng/chart';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlumnoInicioComponent {
-  private router = inject(Router);
   private alumnoService = inject(AlumnoService);
+  private alumnoCalificacionesService = inject(AlumnoCalificacionesService);
   private auth = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private cd = inject(ChangeDetectorRef);
@@ -36,17 +38,22 @@ export class AlumnoInicioComponent {
   loading = signal(true);
   error = signal<string | null>(null);
   resumen = signal<AlumnoDashboardResumen | null>(null);
-  chartData: any = null;
-  chartOptions: any = null;
+  doughnutData: any = null;
+  doughnutOptions: any = null;
+  barData: any = null;
+  barOptions: any = null;
 
   ngOnInit() {
-    this.alumnoService
-      .getDashboardResumen()
+    forkJoin({
+      resumen: this.alumnoService.getDashboardResumen(),
+      calificaciones: this.alumnoCalificacionesService.getMisCalificaciones(),
+    })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res) => {
-          this.resumen.set(res.resumen);
-          this.initChart();
+        next: ({ resumen, calificaciones }) => {
+          this.resumen.set(resumen.resumen);
+          this.initDoughnutChart();
+          this.initBarChart(calificaciones.calificaciones);
           this.loading.set(false);
         },
         error: () => {
@@ -56,7 +63,7 @@ export class AlumnoInicioComponent {
       });
   }
 
-  private initChart() {
+  private initDoughnutChart() {
     const resumen = this.resumen();
     if (!resumen || !isPlatformBrowser(this.platformId)) return;
 
@@ -66,7 +73,7 @@ export class AlumnoInicioComponent {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--p-text-color');
 
-    this.chartData = {
+    this.doughnutData = {
       labels: ['Aprobadas', 'Desaprobadas'],
       datasets: [
         {
@@ -77,7 +84,7 @@ export class AlumnoInicioComponent {
       ],
     };
 
-    this.chartOptions = {
+    this.doughnutOptions = {
       cutout: '60%',
       plugins: {
         legend: {
@@ -91,15 +98,105 @@ export class AlumnoInicioComponent {
     this.cd.markForCheck();
   }
 
-  goToMisMaterias() {
-    this.router.navigate(['/alumno/mis-materias']);
-  }
+  private initBarChart(
+    calificaciones: Array<{
+      calificacion_id: number;
+      tipo: string;
+      fecha: string;
+      nota: string;
+      materia_id: number;
+      materia_nombre: string;
+    }>,
+  ) {
+    if (!isPlatformBrowser(this.platformId)) return;
 
-  goToCatalogo() {
-    this.router.navigate(['/alumno/catalogo']);
-  }
+    const finalesPorMateria = new Map<
+      number,
+      { materia_nombre: string; nota: number; fechaTs: number }
+    >();
+    for (const calificacion of calificaciones) {
+      if (calificacion.tipo !== 'FINAL') continue;
+      const nota = Number(calificacion.nota);
+      if (Number.isNaN(nota)) continue;
 
-  goToMisCalificaciones() {
-    this.router.navigate(['/alumno/mis-calificaciones']);
+      const fechaTs = Date.parse(calificacion.fecha) || 0;
+      const actual = finalesPorMateria.get(calificacion.materia_id);
+      if (!actual || fechaTs >= actual.fechaTs) {
+        finalesPorMateria.set(calificacion.materia_id, {
+          materia_nombre: calificacion.materia_nombre,
+          nota,
+          fechaTs,
+        });
+      }
+    }
+
+    const finales = Array.from(finalesPorMateria.values()).sort((a, b) =>
+      a.materia_nombre.localeCompare(b.materia_nombre, 'es'),
+    );
+
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--p-text-color');
+    const textColorSecondary = documentStyle.getPropertyValue(
+      '--p-text-muted-color',
+    );
+    const surfaceBorder = documentStyle.getPropertyValue(
+      '--p-content-border-color',
+    );
+
+    if (finales.length === 0) {
+      this.barData = null;
+      this.barOptions = null;
+      this.cd.markForCheck();
+      return;
+    }
+
+    this.barData = {
+      labels: finales.map((final) => final.materia_nombre.substring(0, 10) + '...'),
+      datasets: [
+        {
+          label: 'Nota final',
+          data: finales.map((final) => final.nota),
+          backgroundColor: 'rgba(77, 127, 179, 0.25)',
+          borderColor: '#4D7FB3',
+          borderWidth: 1,
+          maxBarThickness: 70,
+        },
+      ],
+    };
+
+    this.barOptions = {
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor,
+            
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: textColorSecondary,
+          },
+          grid: {
+            color: surfaceBorder,
+          },
+        },
+        y: {
+          beginAtZero: true,
+          min: 0,
+          max: 10,
+          ticks: {
+            color: textColorSecondary,
+            stepSize: 1,
+          },
+          grid: {
+            color: surfaceBorder,
+          },
+        },
+      },
+    };
+
+    this.cd.markForCheck();
   }
 }

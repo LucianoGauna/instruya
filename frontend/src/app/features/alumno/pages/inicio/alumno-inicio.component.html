@@ -63,34 +63,29 @@
           <div class="w-full flex justify-center">
             <p-chart
               type="doughnut"
-              class="w-full h-full"
-              [data]="chartData"
-              [options]="chartOptions"
+              width="300"
+              height="300"
+              [data]="doughnutData"
+              [options]="doughnutOptions"
             ></p-chart>
           </div>
         }
       </div>
-    </div>
 
-
-    <div class="flex flex-col justify-end md:flex-row gap-3">
-      <p-button
-        label="Ver catalogo de materias"
-        icon="pi pi-list"
-        (onClick)="goToCatalogo()"
-      ></p-button>
-
-      <p-button
-        label="Ver mis materias"
-        icon="pi pi-book"
-        (onClick)="goToMisMaterias()"
-      ></p-button>
-
-      <p-button
-        label="Ver mis calificaciones"
-        icon="pi pi-star"
-        (onClick)="goToMisCalificaciones()"
-      ></p-button>
+      <div class="rounded-2xl bg-gray-50 col-span-1 xl:col-span-3 shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-3">Notas finales por materia</h2>
+        @if (!barData) {
+          <p class="text-gray-600">No tenés finales registrados para graficar.</p>
+        } @else {
+          <p-chart
+            type="bar"
+            width="100%"
+            height="300px"
+            [data]="barData"
+            [options]="barOptions"
+          ></p-chart>
+        }
+      </div>
     </div>
   }
 </div>
