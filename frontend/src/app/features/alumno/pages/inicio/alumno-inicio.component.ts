@@ -110,19 +110,19 @@ export class AlumnoInicioComponent {
   ) {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const finalesPorMateria = new Map<
+    const notaDefinitivaPorMateria = new Map<
       number,
       { materia_nombre: string; nota: number; fechaTs: number }
     >();
     for (const calificacion of calificaciones) {
-      if (calificacion.tipo !== 'FINAL') continue;
+      if (calificacion.tipo !== 'NOTA_MATERIA') continue;
       const nota = Number(calificacion.nota);
       if (Number.isNaN(nota)) continue;
 
       const fechaTs = Date.parse(calificacion.fecha) || 0;
-      const actual = finalesPorMateria.get(calificacion.materia_id);
+      const actual = notaDefinitivaPorMateria.get(calificacion.materia_id);
       if (!actual || fechaTs >= actual.fechaTs) {
-        finalesPorMateria.set(calificacion.materia_id, {
+        notaDefinitivaPorMateria.set(calificacion.materia_id, {
           materia_nombre: calificacion.materia_nombre,
           nota,
           fechaTs,
@@ -130,7 +130,7 @@ export class AlumnoInicioComponent {
       }
     }
 
-    const finales = Array.from(finalesPorMateria.values()).sort((a, b) =>
+    const finales = Array.from(notaDefinitivaPorMateria.values()).sort((a, b) =>
       a.materia_nombre.localeCompare(b.materia_nombre, 'es'),
     );
 
