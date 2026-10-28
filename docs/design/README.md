@@ -415,3 +415,112 @@ Contiene:
 Contiene las primeras pantallas utilizadas para validar la dirección visual del rediseño en Web y Android.
 
 Estas referencias constituyen la base visual inicial sobre la que se desarrollarán los siguientes flujos.
+
+## Trabajos prácticos y entregas
+
+El flujo de trabajos prácticos forma parte de una Cursada y permite al alumno consultar la consigna, descargar archivos proporcionados por el docente, realizar una entrega y consultar posteriormente su corrección.
+
+Las referencias visuales del flujo se encuentran en:
+
+`cursada-alumno/trabajos-practicos/`
+
+Los componentes y estados reutilizables incorporados durante su diseño se documentan en:
+
+`design-system/componentes_de_entrega.png`
+
+### Estados de un trabajo práctico
+
+Un trabajo práctico puede presentarse en distintos estados según sus fechas y la situación de la entrega del alumno:
+
+- **Pendiente:** el período de entrega continúa abierto y el alumno todavía no realizó una entrega.
+- **Vencido con entrega tardía habilitada:** pasó la fecha límite original, pero todavía existe una ventana habilitada para entregar fuera de término.
+- **Cerrado:** ya no se admiten nuevas entregas ni modificaciones.
+- **Entregado:** existe una entrega confirmada dentro del plazo correspondiente.
+- **Entregado fuera de término:** la última entrega confirmada se realizó después de la fecha límite original y dentro de una ventana tardía habilitada.
+- **Corregido:** el docente calificó la entrega y puede haber registrado una nota, resultado y devolución.
+
+### Carga de archivos
+
+Cada trabajo práctico define los formatos permitidos, la cantidad máxima de archivos y el tamaño máximo admitido.
+
+Durante la preparación de una entrega los archivos pueden encontrarse en distintos estados:
+
+- cargando;
+- cargado correctamente;
+- error de carga;
+- existente en una entrega anterior;
+- nuevo;
+- marcado para eliminar.
+
+Una entrega no puede confirmarse mientras existan archivos cargando o con errores sin resolver.
+
+### Confirmación de una entrega
+
+La carga de archivos no constituye por sí sola una entrega.
+
+La entrega se considera realizada únicamente cuando el alumno confirma explícitamente el envío.
+
+Antes de confirmar, el sistema debe mostrar:
+
+- los archivos que se enviarán;
+- el comentario para el docente, cuando exista;
+- la condición de puntualidad resultante.
+
+Si la fecha límite original ya pasó pero existe una ventana tardía habilitada, el sistema debe informar claramente que la entrega quedará registrada como fuera de término.
+
+### Edición de una entrega
+
+Una entrega ya confirmada puede modificarse cuando se cumplen ambas condiciones:
+
+1. el período de entrega continúa habilitado;
+2. el docente todavía no corrigió la entrega.
+
+Durante una edición el alumno puede:
+
+- agregar nuevos archivos;
+- reemplazar archivos existentes;
+- quitar archivos;
+- modificar el comentario para el docente.
+
+La edición modifica la entrega existente; no crea una entrega independiente.
+
+Los cambios permanecen sin confirmar hasta que el alumno selecciona **Guardar cambios** y confirma nuevamente el envío.
+
+Si el alumno cancela o cierra la edición antes de confirmar, se conserva sin modificaciones el último envío confirmado.
+
+### Puntualidad de una entrega
+
+La condición de puntualidad corresponde siempre al **último envío confirmado**.
+
+Por lo tanto:
+
+- si una entrega se modifica y vuelve a confirmar antes de la fecha límite, continúa registrada en término;
+- si una entrega originalmente realizada en término se modifica y vuelve a confirmar después de la fecha límite, dentro de una ventana tardía habilitada, pasa a registrarse fuera de término;
+- si una entrega ya estaba fuera de término y vuelve a confirmarse dentro de la misma ventana tardía, continúa registrada fuera de término.
+
+Una vez cerrado el período de entrega, ya no puede modificarse.
+
+Una vez corregida por el docente, tampoco puede modificarse, incluso si el período todavía se encuentra abierto.
+
+### Corrección
+
+Cuando el docente corrige una entrega, el alumno puede consultar:
+
+- la nota, cuando corresponda;
+- el resultado académico;
+- la devolución del docente;
+- los archivos que había entregado;
+- la fecha y condición de su último envío confirmado.
+
+El estado **Corregido** representa que el proceso de evaluación de la entrega finalizó. La nota y el resultado académico se consideran datos independientes del estado de la entrega.
+
+### Web y Android
+
+Web y Android comparten las mismas reglas funcionales y estados.
+
+La presentación se adapta a los patrones propios de cada plataforma. Por ejemplo:
+
+- Web utiliza diálogos para confirmaciones y toast para feedback inmediato.
+- Android utiliza bottom sheets para confirmaciones y snackbar para feedback inmediato.
+
+No es necesario que cada combinación posible de estado tenga una pantalla independiente en ambas plataformas; las referencias visuales documentan los casos representativos y los componentes reutilizables.
