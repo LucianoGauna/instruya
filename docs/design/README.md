@@ -130,9 +130,9 @@ Pueden dirigir directamente al elemento relacionado, por ejemplo:
 
 ---
 
-# Alumno — Android
+# Alumno — Mobile / PWA
 
-La aplicación Android está orientada principalmente al uso cotidiano del alumno.
+La experiencia Mobile/PWA está orientada principalmente al uso cotidiano del alumno.
 
 La navegación inferior utiliza:
 
@@ -149,8 +149,7 @@ Dentro de **Más** pueden encontrarse funcionalidades de uso menos frecuente, co
 - Perfil
 - Configuración
 
-La aplicación mobile comparte los datos y backend/API con la aplicación web, pero no replica necesariamente la misma estructura visual.
-
+La experiencia Mobile/PWA se implementa sobre el mismo frontend Angular y comparte los datos y backend/API con la aplicación web, adaptando la navegación y presentación a dispositivos móviles.
 ---
 
 # Docente — Web
@@ -195,9 +194,9 @@ Permite consultar las mesas asignadas al docente, alumnos inscriptos y carga de 
 
 ---
 
-# Docente — Android
+# Docente — Mobile / PWA
 
-La versión mobile docente está limitada a funcionalidades frecuentes y útiles durante la actividad cotidiana.
+La experiencia Mobile/PWA del docente está limitada a funcionalidades frecuentes y útiles durante la actividad cotidiana.
 
 La navegación principal contempla:
 
@@ -372,7 +371,7 @@ solo pueden mostrarse cuando exista una regla académica configurada que permita
 
 El diseño utiliza un lenguaje visual propio de Instruya.
 
-Web y Android comparten:
+Web y Mobile/PWA comparten:
 
 - colores;
 - tipografía;
@@ -381,9 +380,9 @@ Web y Android comparten:
 - componentes conceptuales;
 - lenguaje visual.
 
-Sin embargo, cada plataforma respeta sus propios patrones de interacción.
+Sin embargo, la experiencia se adapta a los patrones de interacción propios de cada contexto de uso.
 
-Android utiliza patrones nativos cuando corresponde, como:
+La experiencia Mobile/PWA utiliza patrones habituales de aplicaciones móviles cuando corresponde, como:
 
 - navegación inferior;
 - gesto/botón de volver;
@@ -391,7 +390,7 @@ Android utiliza patrones nativos cuando corresponde, como:
 - snackbars;
 - áreas táctiles adecuadas.
 
-Esto no implica utilizar una estética genérica de Material Design.
+Estos patrones no implican replicar una estética nativa específica; se mantiene la identidad visual propia de Instruya.
 
 ---
 
@@ -412,7 +411,7 @@ Contiene:
 
 `cursada-alumno/`
 
-Contiene las primeras pantallas utilizadas para validar la dirección visual del rediseño en Web y Android.
+Contiene las primeras pantallas utilizadas para validar la dirección visual del rediseño en Web y Mobile/PWA.
 
 Estas referencias constituyen la base visual inicial sobre la que se desarrollarán los siguientes flujos.
 
@@ -516,11 +515,11 @@ El estado **Corregido** representa que el proceso de evaluación de la entrega f
 
 ### Web y Android
 
-Web y Android comparten las mismas reglas funcionales y estados.
+Web y Mobile/PWA comparten las mismas reglas funcionales y estados.
 
 La presentación se adapta a los patrones propios de cada plataforma. Por ejemplo:
 
 - Web utiliza diálogos para confirmaciones y toast para feedback inmediato.
-- Android utiliza bottom sheets para confirmaciones y snackbar para feedback inmediato.
+- Mobile/PWA utiliza bottom sheets para confirmaciones y snackbar para feedback inmediato.
 
 No es necesario que cada combinación posible de estado tenga una pantalla independiente en ambas plataformas; las referencias visuales documentan los casos representativos y los componentes reutilizables.
