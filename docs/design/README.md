@@ -513,7 +513,7 @@ Cuando el docente corrige una entrega, el alumno puede consultar:
 
 El estado **Corregido** representa que el proceso de evaluación de la entrega finalizó. La nota y el resultado académico se consideran datos independientes del estado de la entrega.
 
-### Web y Android
+### Web y Mobile/PWA
 
 Web y Mobile/PWA comparten las mismas reglas funcionales y estados.
 
@@ -523,3 +523,118 @@ La presentación se adapta a los patrones propios de cada plataforma. Por ejempl
 - Mobile/PWA utiliza bottom sheets para confirmaciones y snackbar para feedback inmediato.
 
 No es necesario que cada combinación posible de estado tenga una pantalla independiente en ambas plataformas; las referencias visuales documentan los casos representativos y los componentes reutilizables.
+
+## Clases y asistencia
+
+El flujo de Clases y asistencia forma parte de una Cursada y permite al alumno consultar las clases registradas, los temas dictados y, cuando corresponda, su situación de asistencia.
+
+Las referencias visuales del flujo se encuentran en:
+
+`cursada-alumno/clases-y-asistencias/`
+
+Los componentes y estados reutilizables incorporados durante su diseño se documentan en:
+
+`design-system/componentes_asistencia.png`
+
+### Modos de asistencia
+
+La asistencia se configura por cursada y puede funcionar en tres modos diferentes.
+
+#### Asistencia obligatoria
+
+La cursada registra asistencia y existe un porcentaje mínimo configurado.
+
+El alumno puede consultar:
+
+- porcentaje actual de asistencia;
+- cantidad de clases computadas;
+- mínimo requerido;
+- estado respecto del mínimo;
+- cantidad de clases por estado;
+- historial de clases y asistencia.
+
+Cuando corresponda, la situación de asistencia puede generar señales en el Radar Académico.
+
+El porcentaje mínimo no es un valor universal del sistema: debe provenir de la configuración de la cursada.
+
+#### Asistencia informativa
+
+La cursada registra asistencia, pero esta no condiciona la aprobación.
+
+El alumno puede consultar su porcentaje y los estados registrados, pero:
+
+- no existe un mínimo requerido;
+- no se muestran estados de riesgo;
+- no se generan señales de asistencia en el Radar Académico.
+
+La interfaz debe indicar explícitamente que la asistencia es informativa.
+
+#### Sin registro de asistencia
+
+La cursada no utiliza control de asistencia.
+
+En este caso:
+
+- no se muestra porcentaje;
+- no se muestra mínimo requerido;
+- no se muestran estados de asistencia;
+- no se generan señales de asistencia en el Radar.
+
+La sección se presenta como **Clases** y permite consultar únicamente las clases registradas y los temas dictados.
+
+### Estados de asistencia por clase
+
+Cuando la cursada utiliza asistencia, una clase puede presentar los siguientes estados para el alumno:
+
+- **Presente**
+- **Ausente**
+- **Tarde**
+- **Justificado**
+- **Sin cargar**
+
+El estado **Sin cargar** indica que la clase fue registrada pero el docente todavía no cargó la asistencia correspondiente.
+
+Las clases con asistencia sin cargar no deben incluirse en el cálculo del porcentaje hasta que exista un estado registrado.
+
+### Reglas de cálculo
+
+La forma en que cada estado participa del cálculo de asistencia depende de la configuración de la cursada.
+
+El sistema no debe asumir reglas universales sobre estados como **Tarde** o **Justificado**.
+
+Cuando corresponda, la interfaz debe permitir al alumno consultar las reglas utilizadas para calcular su asistencia.
+
+Por ejemplo:
+
+> Presente, Tarde y Justificado suman asistencia.
+
+### Historial de clases
+
+El alumno puede consultar el historial de clases registradas en la cursada.
+
+Cada clase puede mostrar:
+
+- fecha;
+- número de clase;
+- tema dictado;
+- estado de asistencia, cuando corresponda.
+
+Las clases se presentan agrupadas cronológicamente y pueden utilizar filtros por estado cuando la cursada registra asistencia.
+
+Las clases futuras o todavía no dictadas no forman parte de este historial. Si en el futuro se incorpora un cronograma de clases planificadas, deberá presentarse de forma diferenciada.
+
+### Estado sin clases registradas
+
+Cuando todavía no existen clases registradas, el sistema debe mostrar un estado vacío que explique qué información aparecerá cuando el docente registre la primera clase.
+
+Si la cursada utiliza asistencia obligatoria, puede mostrarse el mínimo configurado, pero no debe calcularse un porcentaje hasta que existan clases con asistencia registrada.
+
+### Integración con el Radar Académico
+
+Las señales relacionadas con asistencia solo pueden generarse cuando:
+
+1. la cursada utiliza asistencia obligatoria;
+2. existe una regla o mínimo configurado;
+3. existen datos suficientes para evaluar la situación del alumno.
+
+Las cursadas con asistencia informativa o sin registro de asistencia no deben generar alertas de riesgo académico basadas en asistencia.
