@@ -638,3 +638,160 @@ Las señales relacionadas con asistencia solo pueden generarse cuando:
 3. existen datos suficientes para evaluar la situación del alumno.
 
 Las cursadas con asistencia informativa o sin registro de asistencia no deben generar alertas de riesgo académico basadas en asistencia.
+
+## Calificaciones y situación académica
+
+El flujo de Calificaciones forma parte de una Cursada y permite al alumno consultar evaluaciones, notas, recuperatorios, resultados de trabajos prácticos y su situación académica dentro de la cursada.
+
+Las referencias visuales del flujo se encuentran en:
+
+`cursada-alumno/calificaciones/`
+
+Los componentes, estados y variantes reutilizables incorporados durante su diseño se documentan en:
+
+`design-system/componentes_calificaciones.png`
+
+### Evaluaciones
+
+El alumno puede consultar las evaluaciones correspondientes a la cursada, incluyendo:
+
+- parciales;
+- recuperatorios;
+- trabajos prácticos cuando su resultado sea académicamente relevante;
+- evaluaciones próximas;
+- evaluaciones pendientes de calificación.
+
+Cada evaluación puede mostrar:
+
+- nombre;
+- tipo;
+- fecha;
+- calificación, cuando exista;
+- resultado académico;
+- participación dentro de las reglas de la cursada.
+
+El detalle completo de una entrega de trabajo práctico permanece dentro de la sección **Trabajos prácticos**. En Calificaciones se muestra únicamente la información académica necesaria.
+
+### Reglas académicas configurables
+
+Instruya no asume una única forma de determinar la situación académica de un alumno.
+
+Las reglas se configuran por cursada y pueden contemplar:
+
+- si la cursada es promocionable;
+- nota mínima por parcial para promoción;
+- promedio simple mínimo entre parciales, cuando corresponda;
+- instancias válidas para promoción;
+- nota mínima para regularidad;
+- uso de recuperatorios;
+- trabajos prácticos requeridos;
+- asistencia mínima requerida.
+
+No se utilizan ponderaciones diferentes entre parciales ni promedios ponderados.
+
+Cuando existe un promedio configurado, se utiliza un promedio simple entre las notas que correspondan según las reglas de la cursada.
+
+### Promoción y regularidad
+
+Las condiciones de **Promoción** y **Regularidad** se evalúan de forma independiente.
+
+Una cursada puede, por ejemplo, exigir para promoción:
+
+- determinada nota mínima en cada parcial;
+- un promedio mínimo entre parciales;
+- aprobación en primera instancia;
+- trabajos prácticos aprobados;
+- asistencia mínima.
+
+Y utilizar condiciones diferentes para regularidad.
+
+Por este motivo, un alumno puede no cumplir las condiciones de promoción y aun así encontrarse en condición regular.
+
+Cuando la cursada no sea promocionable, únicamente se evaluarán las condiciones correspondientes a regularidad.
+
+### Primera instancia y recuperatorios
+
+Las reglas de una cursada pueden determinar que únicamente las calificaciones obtenidas en primera instancia sean válidas para promoción.
+
+En ese caso, un recuperatorio puede permitir aprobar una evaluación o alcanzar la regularidad sin recuperar la posibilidad de promoción.
+
+También puede configurarse una cursada en la que la calificación obtenida en recuperatorio pase a utilizarse como **nota efectiva** para los cálculos académicos correspondientes.
+
+La calificación original nunca se elimina del historial.
+
+Por ejemplo:
+
+```text
+Parcial 1: 5
+Recuperatorio del Parcial 1: 8
+```
+
+Si el recuperatorio se utiliza como nota efectiva, el sistema conserva ambas calificaciones y utiliza el `8` para los cálculos definidos por la cursada.
+
+### Situación académica provisoria
+
+Mientras la cursada continúa activa, la situación académica del alumno es provisoria.
+
+Según las reglas configuradas y los datos disponibles, pueden mostrarse estados como:
+
+- **Promocionando**
+- **En condición regular**
+- **Debe recuperar**
+- **No cumple regularidad**
+
+La interfaz debe aclarar que esta situación puede modificarse a medida que se registran nuevas evaluaciones, asistencias o resultados.
+
+Si no existen reglas suficientes para determinar una condición académica, el sistema muestra las calificaciones disponibles sin calcular automáticamente una situación general.
+
+En este caso se utiliza el estado:
+
+**Sin cálculo configurado**
+
+### Resultado definitivo
+
+Cuando la cursada se cierra, la situación provisoria pasa a convertirse en un resultado definitivo.
+
+Según las reglas configuradas, pueden existir resultados como:
+
+- **Promocionada**
+- **Regular**
+- **Regularidad no alcanzada**
+
+La denominación utilizada debe mantenerse neutral y no asumir términos institucionales que no hayan sido configurados.
+
+### Nota final de la materia
+
+La condición académica calculada y la nota final de la materia son conceptos diferentes.
+
+Instruya puede determinar mediante las reglas de la cursada si el alumno cumple las condiciones de promoción o regularidad.
+
+Sin embargo, la **nota final de la materia** es cargada por el docente al cerrar la cursada.
+
+La nota final no debe inferirse automáticamente a partir del promedio de parciales.
+
+Por ejemplo:
+
+```text
+Condición final: Promocionada
+Nota final de la materia: 9
+```
+
+La condición surge de las reglas académicas configuradas, mientras que la nota final fue registrada por el docente.
+
+### Estado sin evaluaciones
+
+Cuando todavía no existen evaluaciones publicadas o calificadas, el sistema muestra un estado vacío.
+
+Las reglas académicas configuradas para la cursada pueden consultarse igualmente, aunque todavía no exista información suficiente para calcular la situación del alumno.
+
+### Integración con el Radar Académico
+
+Las señales relacionadas con calificaciones deben derivarse únicamente de reglas académicas configuradas.
+
+El Radar puede interpretar situaciones como:
+
+- una condición de promoción que dejó de cumplirse;
+- una evaluación pendiente de recuperación;
+- condiciones de regularidad en riesgo.
+
+No debe inferir promedios, condiciones académicas o recomendaciones que no puedan justificarse mediante las reglas y datos disponibles.
