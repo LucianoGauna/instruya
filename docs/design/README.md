@@ -351,7 +351,7 @@ En este caso el Radar puede generar alertas y recomendaciones.
 
 ## Evaluaciones
 
-El sistema no debe calcular automáticamente un promedio mezclando evaluaciones que pueden tener distintos pesos.
+El sistema no debe calcular automáticamente promedios combinando evaluaciones con criterios académicos diferentes si no existe una regla de cálculo configurada.
 
 Las reglas de evaluación pueden variar entre cursadas.
 
